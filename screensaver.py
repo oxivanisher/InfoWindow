@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 import tempfile
 from driver import epd7in5b
 from PIL import Image
