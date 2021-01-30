@@ -93,21 +93,3 @@ class InfoWindow:
                 return string
 
         return string
-
-    def display(self, angle):
-
-        Limage = Image.new('1', (880, 528), 255)  # 255: clear the frame
-        self.image = self.image.rotate(angle)
-
-        new_image_found = True
-        if os.path.exists(self.tmpImagePath):
-            old_image = Image.open(self.tmpImagePath)
-            diff = ImageChops.difference(self.image, old_image)
-            if not diff.getbbox():
-                new_image_found = False
-
-        if new_image_found:
-            logging.info("New information in the image detected. Updating the screen.")
-            self.image.save(self.tmpImagePath)
-        else:
-            logging.info("No new information found. Not updating the screen.")
