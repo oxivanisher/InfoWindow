@@ -242,7 +242,7 @@ def main():
             if not diff.getbbox():
                 new_image_found += 1
 
-        if new_image_found < 2:
+    if new_image_found < 2:
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(self.tmpImagePath)
             red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
