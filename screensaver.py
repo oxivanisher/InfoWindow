@@ -19,14 +19,15 @@ def main():
     white = Image.open(os.path.join("resources", "white.png"))
     epd.display(epd.getbuffer(black),epd.getbuffer(white))
     logging.info("Display black")
-    epd.display(epd.getbuffer(white),epd.getbuffer(red))
+    epd.display(epd.getbuffer(white),epd.getbuffer(black))
     logging.info("Display red")
     epd.display(epd.getbuffer(white),epd.getbuffer(white))
     logging.info("Display white")
-
+      
     epd.sleep()
     logging.info("Screen saver finished")
 
+    os.remove(os.path.join(tempfile.gettempdir(), "black.png"))
 
 if __name__ == '__main__':
     main()
