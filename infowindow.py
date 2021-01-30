@@ -230,8 +230,8 @@ def main():
 
         # Write to screen
     # =========================================================================
-    red.display(rotation)
-    black.display(rotation)
+    red.image = red.image.rotate(rotation)
+    black.image = black.image.rotate(rotation)
     
     new_image_found = 0
     if os.path.exists(red.tmpImagePath):
@@ -246,7 +246,7 @@ def main():
             diff = ImageChops.difference(black.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
-                logging.info("No change to red")
+                logging.info("No change to black")
 
     if new_image_found < 2:
             logging.info("New information in the image detected. Updating the screen.")
@@ -257,9 +257,5 @@ def main():
     else:
             logging.info("No new information found. Not updating the screen.")
     
-    
-
-
-
 if __name__ == '__main__':
     main()
