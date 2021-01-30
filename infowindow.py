@@ -231,20 +231,21 @@ def main():
     
     new_image_found = 0
     if os.path.exists(red.tmpImagePath):
-            old_image = Image.open(red.tmpImagePath)
-            diff = ImageChops.difference(red.image, old_image)
+            old_image = red.Image.open(red.tmpImagePath)
+            diff = red.ImageChops.difference(red.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
                 
     if os.path.exists(black.tmpImagePath):
-            old_image = Image.open(black.tmpImagePath)
-            diff = ImageChops.difference(black.image, old_image)
+            old_image = black.Image.open(black.tmpImagePath)
+            diff = black.ImageChops.difference(black.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
 
     if new_image_found < 2:
             logging.info("New information in the image detected. Updating the screen.")
-            red.image.save(self.tmpImagePath)
+            red.image.save(red.tmpImagePath)
+            balck.image.save(black.tmpImagePath)
             red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
             red.epd.sleep()
     else:
