@@ -14,9 +14,9 @@ def main():
     epd = epd7in5b.EPD()
     epd.init()
 
-    black = Image.open(os.path.join("resources", "black.png"))
-    red = Image.open(os.path.join("resources", "red.png"))
-    white = Image.open(os.path.join("resources", "white.png"))
+    black = Image.open(os.path.join(os.getcwd(), "resources", "black.png"))
+    red = Image.open(os.path.join(os.getcwd(),"resources", "red.png"))
+    white = Image.open(os.path.join(os.getcwd(),"resources", "white.png"))
     epd.display(epd.getbuffer(black),epd.getbuffer(white))
     logging.info("Display black")
     epd.display(epd.getbuffer(white),epd.getbuffer(black))
