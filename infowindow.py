@@ -228,7 +228,29 @@ def main():
     # =========================================================================
     red.display(rotation)
     black.display(rotation)
-    red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
+    
+    new_image_found = 0
+    if os.path.exists(red.tmpImagePath):
+            old_image = Image.open(red.tmpImagePath)
+            diff = ImageChops.difference(red.image, old_image)
+            if not diff.getbbox():
+                new_image_found += 1
+                
+    if os.path.exists(black.tmpImagePath):
+            old_image = Image.open(black.tmpImagePath)
+            diff = ImageChops.difference(black.image, old_image)
+            if not diff.getbbox():
+                new_image_found += 1
+
+        if new_image_found < 2:
+            logging.info("New information in the image detected. Updating the screen.")
+            red.image.save(self.tmpImagePath)
+            red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
+            red.epd.sleep()
+        else:
+            logging.info("No new information found. Not updating the screen.")
+    
+    
 
 
 
