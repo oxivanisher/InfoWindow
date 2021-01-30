@@ -251,7 +251,7 @@ def main():
     if new_image_found < 2:
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(red.tmpImagePath)
-            balck.image.save(black.tmpImagePath)
+            black.image.save(black.tmpImagePath)
             red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
             red.epd.sleep()
     else:
