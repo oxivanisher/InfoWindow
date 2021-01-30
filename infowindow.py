@@ -247,7 +247,7 @@ def main():
             red.image.save(self.tmpImagePath)
             red.epd.display(black.epd.getbuffer(black.image),red.epd.getbuffer(red.image))
             red.epd.sleep()
-        else:
+    else:
             logging.info("No new information found. Not updating the screen.")
     
     
