@@ -6,6 +6,10 @@ import os.path
 import json
 import logging
 import string
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import ImageChops
 from mod_infowindow import infowindow
 
 # Select pluggable module for todo list, calendar and weather.
@@ -231,14 +235,14 @@ def main():
     
     new_image_found = 0
     if os.path.exists(red.tmpImagePath):
-            old_image = red.Image.open(red.tmpImagePath)
-            diff = red.ImageChops.difference(red.image, old_image)
+            old_image = Image.open(red.tmpImagePath)
+            diff = ImageChops.difference(red.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
                 
     if os.path.exists(black.tmpImagePath):
-            old_image = black.Image.open(black.tmpImagePath)
-            diff = black.ImageChops.difference(black.image, old_image)
+            old_image = Image.open(black.tmpImagePath)
+            diff = ImageChops.difference(black.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
 
