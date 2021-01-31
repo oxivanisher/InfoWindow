@@ -139,7 +139,7 @@ def main():
         due = datetime.datetime(todo_item['due'][1:4],todo_item['due'][6:7],todo_item['due'][9:10])
         logging.info(str(due))
        except:
-        pass
+        due = 0
        finally:     
         #todo_itemstime.strptime(date2, "%d/%m/%Y")
         if (2156103501 in todo_item['labels']) and (datetime.datetime.now() - due >= 0):
