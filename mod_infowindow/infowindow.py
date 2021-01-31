@@ -93,7 +93,5 @@ class InfoWindow:
                 return string
         return string
     
-    def rtext(self, right, top, text, font, fill=0):
-        font = self.fonts[font]
-        self.draw.text((right, top), text, font=font, fill=fill)
-        return self.draw.textsize(text, font=font)
+    def spare():
+        
