@@ -93,6 +93,20 @@ class InfoWindow:
                 return string
 
         return string
+    
+     def rightalign(self, string, font, max_size):
+        spacechar = string.find(" ")
+        num_chars = len(string)
+        for char in string:
+            (np_x, np_y) = self.getFont(font).getsize(string)
+            if np_x < max_size:
+                oldstring = string
+                string = string[0:spacechar] + " " + string [:-1]
+
+            if np_x > max_size:
+                return oldstring
+
+        return oldstring
 
     def display(self, angle):
 
