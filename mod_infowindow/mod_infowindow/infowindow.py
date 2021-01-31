@@ -94,7 +94,7 @@ class InfoWindow:
 
         return string
     
-     def rightalign(self, string, font, max_size):
+    def rightalign(self, string, font, max_size):
         spacechar = string.find(" ")
         num_chars = len(string)
         for char in string:
