@@ -6,6 +6,7 @@ import os.path
 import json
 import logging
 import string
+import datetime
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -134,6 +135,9 @@ def main():
 
     current_task_y = 25
     for todo_item in todo_items:
+        if 2156103501 in todo_item['labels'] and datetime.now()-todo_item['due] >= 0:
+            red.text(595, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(todo_item['content'].encode(charset).strip(), tasks_font, 286),
+                tasks_font)
         black.text(595, (current_task_y + infowindow_opts["cell_spacing"]), black.truncate(todo_item['content'].encode(charset).strip(), tasks_font, 286),
                 tasks_font)
         red.line(595, (current_task_y + line_height + 1), 880, (current_task_y + line_height + 1))
