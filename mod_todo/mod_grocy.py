@@ -29,7 +29,7 @@ class test:
                 best_before_date = datetime.date(int(best_before[0:4]),int(best_before[5:7]),int(best_before[8:10]))
                 days = best_before_date - today
                 items.append({
-                    "content": str(days.days) + " " + item['product']['name'],
+                    "content": item['product']['name'],
                     "best_before": item['best_before_date'],
                     "days": str(days.days)
                     })
