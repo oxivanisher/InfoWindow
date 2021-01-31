@@ -20,22 +20,8 @@ class InfoWindow:
         self.colour = colour
         self.initFonts()
         self.tmpImagePath = os.path.join(tempfile.gettempdir(), colour+".png")
-        self.timeformat = options['timeformat']
-        
-    def align(self, string, font, max_size):
-        spacechar = string.find(" ")
-        num_chars = len(string)
-        for char in string:
-            (np_x, np_y) = self.getFont(font).getsize(string)
-            if np_x < max_size:
-                oldstring = string
-                string = string[0:spacechar] + " " + string [:-1]
-
-            if np_x > max_size:
-                return oldstring
-
-        return oldstring
-    
+        self.timeformat = options['timeformat'] 
+       
     def getCWD(self):
         path = os.path.dirname(os.path.realpath(sys.argv[0]))
         return path
