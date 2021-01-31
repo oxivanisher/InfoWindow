@@ -6,7 +6,7 @@ import os.path
 import json
 import logging
 import string
-import time
+import datetime
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
