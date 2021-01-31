@@ -171,10 +171,11 @@ def main():
     current_task_y = 25
     for grocy_item in grocy_items:
         if int(grocy_item['days']) < 3:
-            red.text(298, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286),
+            spacechr = 
+            red.text(298, (current_task_y + infowindow_opts["cell_spacing"]), red.rightalign(red.truncate(grocy_item['content'].encode(charset).strip()), tasks_font, 286),
                 tasks_font)
         else:
-            black.text(298, (current_task_y + infowindow_opts["cell_spacing"]), black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286),
+            black.text(298, (current_task_y + infowindow_opts["cell_spacing"]), black.rightalign(black.truncate(grocy_item['content'].encode(charset).strip()), tasks_font, 286),
                 tasks_font)
         red.line(298, (current_task_y + line_height + 1), 582, (current_task_y + line_height + 1))
 
