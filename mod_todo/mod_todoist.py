@@ -22,6 +22,7 @@ class ToDo:
                     items.append({
                         "content": item['content'],
                         "priority": item['priority'],
+                        "labels":item['labels']
                     })
 
             # Sort the array by priority
