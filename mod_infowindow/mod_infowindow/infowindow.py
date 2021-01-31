@@ -46,6 +46,11 @@ class InfoWindow:
         self.draw.text((left, top), text, font=font, fill=fill)
         return self.draw.textsize(text, font=font)
 
+    def rtext(self, right, top, text, font, fill=0):
+        font = self.fonts[font]
+        self.draw.text((right, top), text, font=font, fill=fill)
+        return self.draw.textsize(text, font=font)
+    
     def textwidth(self, text, font):
         font = self.fonts[font]
         ascent, descent = font.getmetrics()
