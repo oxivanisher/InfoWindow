@@ -136,7 +136,7 @@ def main():
     current_task_y = 25
     for todo_item in todo_items:
         if todo_item['due']:
-            date = datetime.datetime.strptime(todo_item['due'][0:10], '%Y-%m-%d')
+            date = datetime.datetime.strptime(todo_item['due'][0:10], '%Y-%m-%d').date()
         else:
             date = datetime.datetime.now().date()
         if datetime.datetime.now().date() >= date:
