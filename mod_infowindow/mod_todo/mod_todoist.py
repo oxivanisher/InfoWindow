@@ -29,7 +29,7 @@ class ToDo:
                         "content": item['content'],
                         "priority": item['priority'],
                         "labels": item['labels'],
-                        "due": get_date_string(item['due'])
+                        "due": get_date_string(item['due']['date'])
                     })
 
             # Sort the array by priority
