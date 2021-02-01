@@ -19,6 +19,10 @@ class ToDo:
         if self.api:
             for item in self.api.state['items']:
                 if item['checked'] == 0:
+                    if item['due']:
+                        items.append({
+                            "due":item['due']['date']
+                         })    
                     items.append({
                         "content": item['content'],
                         "priority": item['priority'],
