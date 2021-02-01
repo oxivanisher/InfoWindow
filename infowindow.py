@@ -177,7 +177,9 @@ def main():
             red.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
             
         else:
-            black.text(298, (current_task_y + infowindow_opts["cell_spacing"]), black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286), tasks_font)
+            black.text(298, (current_task_y + infowindow_opts["cell_spacing"]), str(grocy_item['days']), tasks_font)
+            (op_x, op_y) = black.getFont(tasks_font).getsize(black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x))
+            black.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
         red.line(298, (current_task_y + line_height + 1), 582, (current_task_y + line_height + 1))
 
 
