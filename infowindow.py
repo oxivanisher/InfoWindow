@@ -138,8 +138,8 @@ def main():
         if todo_item['due']:
             date = datetime.datetime.strptime(todo_item['due'][0:10], '%Y-%m-%d')
         else:
-            date = 0
-        if datetime.datetime.now() - date >= 0:
+            date = datetime.datetime.now().date()
+        if datetime.datetime.now().date() >= date:
             logging.info(str(date)) 
      
             if 2156103501 in todo_item['labels']:
