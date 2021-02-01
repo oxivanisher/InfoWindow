@@ -7,7 +7,6 @@ import json
 import logging
 import string
 import datetime
-import rfc3339 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -256,14 +255,12 @@ def main():
             diff = ImageChops.difference(red.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
-                logging.info("No change to red")
                 
     if os.path.exists(black.tmpImagePath):
             old_image = Image.open(black.tmpImagePath)
             diff = ImageChops.difference(black.image, old_image)
             if not diff.getbbox():
                 new_image_found += 1
-                logging.info("No change to black")
 
     if new_image_found < 2:
             logging.info("New information in the image detected. Updating the screen.")
