@@ -24,10 +24,7 @@ class ToDo:
                         "priority": item['priority'],
                         "labels":item['labels']
                     })    
-                    if item['due']:
-                         items.append({
-                              "due":item['due']['date']
-                         })    
+               
 
             # Sort the array by priority
             items = sorted(items, key = lambda i: i['priority'])
