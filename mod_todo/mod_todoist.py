@@ -24,7 +24,7 @@ class ToDo:
                         "priority": item['priority'],
                         "labels":item['labels']
                     })    
-                     if item['due']:
+                    if item['due']:
                          items.append({
                               "due":item['due']['date']
                          })    
