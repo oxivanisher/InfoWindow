@@ -98,7 +98,7 @@ def main():
     # Calendar / Todo Title Line
     black.line(0, 0, 880, 0)  # Top Line
     red.rectangle(1, 1, 880, 24)  # Red Rectangle
-    black.line(0, 24, 880, 24)  # Bottom Black Line
+    black.line(0, 25, 880, 25)  # Bottom Black Line
 
     # Titles
     text_width = red.textwidth("CALENDAR", 'robotoBlack24')
