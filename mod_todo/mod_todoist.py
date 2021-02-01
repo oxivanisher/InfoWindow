@@ -23,7 +23,7 @@ class ToDo:
                         "content": item['content'],
                         "priority": item['priority'],
                         "labels":item['labels'],
-                        "due":item['due']
+                        "due":item['due']['date']
                     })
 
             # Sort the array by priority
