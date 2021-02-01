@@ -22,9 +22,12 @@ class ToDo:
                     items.append({
                         "content": item['content'],
                         "priority": item['priority'],
-                        "labels":item['labels'],
-                        "due":item['due']['date']
-                    })
+                        "labels":item['labels']
+                    })    
+                     if item['due']:
+                         items.append({
+                              "due":item['due']['date']
+                         })    
 
             # Sort the array by priority
             items = sorted(items, key = lambda i: i['priority'])
