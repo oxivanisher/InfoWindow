@@ -23,7 +23,7 @@ class ToDo:
                         items.append({
                             "content": item['content'],
                             "priority": item['priority'],
-                            "labels":item['labels']
+                            "labels":item['labels'],
                             "due":item['due']['date']
                          })    
                     else:
