@@ -7,6 +7,7 @@ import json
 import logging
 import string
 import datetime
+import rfc3339 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -70,7 +71,6 @@ def HandleException(et, val, tb):
 
 
 sys.excepthook = HandleException
-
 
 # helper to calculate max char width and height
 def get_max_char_size(black, chars, font):
@@ -136,8 +136,8 @@ def main():
     current_task_y = 25
     for todo_item in todo_items:
         if todo_item['due']:
-         due = int(todo_item['due'][1:4]) + int(todo_item['due'][6:7]) + int(todo_item['due'][9:10])
-         logging.info(str(due))
+         #due = int(todo_item['due'][1:4]) + int(todo_item['due'][6:7]) + int(todo_item['due'][9:10])
+         logging.info(str(todo_item['due']))
        # if datetime.datetime.now() - due >= 0:
         #    continue
        #except:
