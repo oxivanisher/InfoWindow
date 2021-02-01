@@ -21,13 +21,17 @@ class ToDo:
                 if item['checked'] == 0:
                     if item['due']:
                         items.append({
+                            "content": item['content'],
+                            "priority": item['priority'],
+                            "labels":item['labels']
                             "due":item['due']['date']
                          })    
-                    items.append({
-                        "content": item['content'],
-                        "priority": item['priority'],
-                        "labels":item['labels']
-                    })    
+                    else:
+                        items.append({
+                            "content": item['content'],
+                            "priority": item['priority'],
+                            "labels":item['labels']
+                        })    
                
 
             # Sort the array by priority
