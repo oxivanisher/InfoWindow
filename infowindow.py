@@ -175,11 +175,7 @@ def main():
             text = red
         else:
             text = black
-            #red.text(298, (current_task_y + infowindow_opts["cell_spacing"]), str(grocy_item['days']) + " ", tasks_font)
-            #(op_x, op_y) = red.getFont(tasks_font).getsize(red.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x))
-            #red.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
-            
-        #else:
+      
         text.text(298, (current_task_y + infowindow_opts["cell_spacing"]), str(grocy_item['days'] + " "), tasks_font)
         (op_x, op_y) = text.getFont(tasks_font).getsize(black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x))
         text.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), text.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
