@@ -94,4 +94,4 @@ class InfoWindow:
         return string
     
     def spare():
-        
+        return
