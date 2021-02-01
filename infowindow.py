@@ -208,7 +208,7 @@ def main():
 
     line_height = (2 * dt_y) + (2 * infowindow_opts["cell_spacing"])
 
-    current_calendar_y = 25
+    current_calendar_y = 26
     for cal_item in cal_items:
         font_color = 'black'
         if cal_item['today']:
