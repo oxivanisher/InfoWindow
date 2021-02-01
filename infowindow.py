@@ -135,7 +135,7 @@ def main():
 
     current_task_y = 25
     for todo_item in todo_items:
-        if todo_item['due']
+        if todo_item['due']:
          due = datetime.datetime(todo_item['due']) #[1:4],todo_item['due'][6:7],todo_item['due'][9:10])
          logging.info(str(due))
        # if datetime.datetime.now() - due >= 0:
