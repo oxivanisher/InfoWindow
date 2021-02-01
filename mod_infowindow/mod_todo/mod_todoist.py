@@ -1,6 +1,9 @@
 import todoist
 import logging
+import rfc3339
 
+def get_date_string(date_object):
+        return rfc3339.rfc3339(date_object)
 
 class ToDo:
     def __init__(self, opts):
@@ -11,7 +14,10 @@ class ToDo:
         else:
             self.api = todoist.TodoistAPI(opts['api_key'])
             self.api.sync()
+    #convert todoist dates to date objects
 
+
+    
     def list(self):
         items = []
         # Loop through original array from Todoist and pull out
@@ -22,6 +28,8 @@ class ToDo:
                     items.append({
                         "content": item['content'],
                         "priority": item['priority'],
+                        "labels": item['labels'],
+                        "due": get_date_string(item['due'])
                     })
 
             # Sort the array by priority
