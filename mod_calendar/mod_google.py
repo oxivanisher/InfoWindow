@@ -28,7 +28,7 @@ class Cal:
         while True:
             calendar_list = service.calendarList().list(pageToken=page_token).execute()
             for calendar_list_entry in calendar_list['items']:
-                if "primary" in calendar_list_entry.keys() and in self.include:
+                if "primary" in calendar_list_entry.keys() and "primary" in self.include:
                     if calendar_list_entry['primary']:
                         calendar_ids.append(calendar_list_entry['id'])
                         print(str(calendar_list_entry['primary']))
