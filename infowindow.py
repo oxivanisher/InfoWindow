@@ -1,5 +1,4 @@
 #!/usr/bin/env python2
-# 880 528
 
 import sys
 import os.path
