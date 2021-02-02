@@ -24,7 +24,7 @@ class Cal:
         service = build('calendar', 'v3', credentials=self.creds)
         now = dt.utcnow().isoformat() + 'Z'
 
-       page_token = None
+        page_token = None
         while True:
             calendar_list = service.calendarList().list(pageToken=page_token).execute()
             for calendar_list_entry in calendar_list['items']:
