@@ -13,7 +13,7 @@ class Cal:
         ga = mod_google_auth.GoogleAuth()
         self.creds = ga.login()
         self.timeformat = options["timeformat"]
-        self.additional = options["additional"]
+        self.include = options["include"]
         self.ignored = options["ignored"]
 
     def list(self):
@@ -28,10 +28,7 @@ class Cal:
         while True:
             calendar_list = service.calendarList().list(pageToken=page_token).execute()
             for calendar_list_entry in calendar_list['items']:
-                if "primar" in calendar_list_entry.keys():
-                    if calendar_list_entry['primary']:
-                        calendar_ids.append(calendar_list_entry['id'])
-                elif calendar_list_entry['summary'] in self.additional:
+               if calendar_list_entry['summary'] in self.include:
                     calendar_ids.append(calendar_list_entry['id'])
             page_token = calendar_list.get('nextPageToken')
             if not page_token:
