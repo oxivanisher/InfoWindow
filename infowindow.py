@@ -93,7 +93,7 @@ def main():
     red = infowindow.InfoWindow(infowindow_opts, "red")
     black = infowindow.InfoWindow(infowindow_opts, "black")
 
-    # Calendar / Todo Title Line
+    # Title Line
     black.line(0, 0, 880, 0)  # Top Line
     red.rectangle(1, 1, 880, 24)  # Red Rectangle
     black.line(0, 25, 880, 25)  # Bottom Black Line
@@ -112,7 +112,7 @@ def main():
     calendar_entry_font = "robotoBlack18"
     tasks_font = "robotoBlack18"
 
-    # Dividing line
+    # Dividing lines
     black.line(286, 24, 286, 528)  # Left Black line
     red.rectangle(287, 24, 296, 528)  # Red Rectangle
     black.line(297, 24, 297, 528)  # Right Black line
@@ -121,7 +121,7 @@ def main():
     red.rectangle(584, 24, 593, 528)  # Red Rectangle
     black.line(594, 24, 594, 528)  # Right Black line
 
-        # DISPLAY TODO INFO
+    # DISPLAY TODO INFO
     # =========================================================================
     todo_items = todo.list()
     logging.debug("Todo Items")
@@ -153,7 +153,7 @@ def main():
                 logging.debug("ITEM: %s" % todo_item['content'].encode(charset).strip())
         
 
-        # DISPLAY GROCY INFO
+    # DISPLAY GROCY INFO
     # =========================================================================
     grocy_items = grocy.list()
     logging.debug("Grocy Items")
@@ -242,7 +242,7 @@ def main():
         # logging.debug("ITEM: "+str(cal_item['date']), str(cal_item['time']), str(cal_item['content']))
         logging.debug("ITEM: %s" % cal_item['content'].encode(charset).strip())
 
-        # Write to screen
+    # Write to screen
     # =========================================================================
     red.image = red.image.rotate(rotation)
     black.image = black.image.rotate(rotation)
@@ -251,16 +251,16 @@ def main():
     if os.path.exists(red.tmpImagePath):
             old_image = Image.open(red.tmpImagePath)
             diff = ImageChops.difference(red.image, old_image)
-            if not diff.getbbox():
+            if diff.getbbox():
                 new_image_found += 1
                 
     if os.path.exists(black.tmpImagePath):
             old_image = Image.open(black.tmpImagePath)
             diff = ImageChops.difference(black.image, old_image)
-            if not diff.getbbox():
+            if diff.getbbox():
                 new_image_found += 1
 
-    if new_image_found < 2:
+    if new_image_found > 0:
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(red.tmpImagePath)
             black.image.save(black.tmpImagePath)
