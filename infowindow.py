@@ -139,8 +139,7 @@ def main():
         else:
             date = datetime.datetime.now().date()
         if datetime.datetime.now().date() >= date:
-            logging.info(str(date)) 
-     
+            
             if 2156103501 in todo_item['labels']:
                 red.text(595, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(todo_item['content'].encode(charset).strip(), tasks_font, 286), tasks_font)
                 red.line(595, (current_task_y + line_height + 1), 880, (current_task_y + line_height + 1))
