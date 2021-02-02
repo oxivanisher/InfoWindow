@@ -16,7 +16,6 @@ from mod_infowindow import infowindow
 # Replace the mod_<name> with one of:
 # TODO: mod_todoist, mod_teamwork
 # CALENDAR: mod_google, mod_ical
-# WEATHER: mod_owm, mod_wunderground
 from mod_utils import iw_utils
 from mod_todo import mod_todoist as modTodo  # TODO
 from mod_calendar import mod_google as modCalendar  # CALENDAR
@@ -35,11 +34,9 @@ charset = config_data["general"]["charset"]
 todo_opts = config_data["todo"]
 grocy_opts = config_data["grocy"]
 calendar_opts = config_data["calendar"]
-weather_opts = config_data["weather"]
 infowindow_opts = {}
 # give the timeformat to all the modules needing it
 calendar_opts["timeformat"] = config_data["general"]["timeformat"]
-weather_opts["timeformat"] = config_data["general"]["timeformat"]
 infowindow_opts["timeformat"] = config_data["general"]["timeformat"]
 infowindow_opts["cell_spacing"] = config_data["general"]["cell_spacing"]
 
