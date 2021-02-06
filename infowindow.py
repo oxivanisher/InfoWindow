@@ -202,9 +202,9 @@ def main():
 
     current_calendar_y = 26
     for cal_item in cal_items:
-        font_color = 'black'
+        text = black
         if cal_item['today']:
-            font_color = calendar_opts['today_text_color']
+            text = red
             black.rectangle(0, current_calendar_y,
                          285, (current_calendar_y + line_height),
                          calendar_opts['today_background_color'])
@@ -219,17 +219,17 @@ def main():
                 'black')
 
         # draw event date
-        black.text((infowindow_opts["cell_spacing"]),
+        text.text((infowindow_opts["cell_spacing"]),
                 (current_calendar_y + infowindow_opts["cell_spacing"]),
                 cal_item['date'].encode(charset).strip(), calendar_date_font, font_color)
         # draw event time
-        black.text((infowindow_opts["cell_spacing"]),
+        text.text((infowindow_opts["cell_spacing"]),
                 (current_calendar_y + ((line_height - 2 * infowindow_opts["cell_spacing"]) / 2)),
                 cal_item['time'].encode(charset).strip(), calendar_date_font, font_color)
         # draw event text
         calendar_event_text_start = dt_x + (3 * infowindow_opts["cell_spacing"]) + 1
         max_event_text_length = 285 - calendar_event_text_start - infowindow_opts["cell_spacing"]
-        black.text(calendar_event_text_start,
+        text.text(calendar_event_text_start,
                 (current_calendar_y + ((line_height - it_y) / 2)),
                 black.truncate(cal_item['content'].encode(charset).strip(), calendar_entry_font, max_event_text_length),
                 calendar_entry_font, font_color)
