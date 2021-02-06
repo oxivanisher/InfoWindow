@@ -1,22 +1,22 @@
 {
     "general": {
-        "rotation": 180,
+        "rotation": 0,
         "timeformat": "12h",
-        "charset": "latin1",
+        "charset": "utf-8",
         "cell_spacing": 2
     },
     "todo": {
-        "api_key": "1234"
+        "api_key": ""
     },
     "calendar": {
-        "additional": ["Contacts", "Birthdays"],
-        "ignored": ["Buy ticket!"],
-        "today_text_color": "red",
+        "include": [""],
+        "ignored": [""],
+        "today_text_color": "black",
         "today_background_color": "white"
     },
-    "weather": {
-        "api_key": "1234",
-        "city": "Sacramento,US",
-        "units": "imperial"
+    "grocy": {
+            "api_key": "",
+            "server": "",
+            "port": ""
     }
 }
