@@ -249,13 +249,13 @@ def main():
     if os.path.exists(red.tmpImagePath):
             old_image = Image.open(red.tmpImagePath)
             diff = ImageChops.difference(red.image, old_image)
-            if !diff.getbbox():
+            if not diff.getbbox():
                 new_image_found += 1
                 
     if os.path.exists(black.tmpImagePath):
             old_image = Image.open(black.tmpImagePath)
             diff = ImageChops.difference(black.image, old_image)
-            if !diff.getbbox():
+            if not diff.getbbox():
                 new_image_found += 1
 
     if new_image_found < 2:
