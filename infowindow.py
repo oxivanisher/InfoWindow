@@ -202,6 +202,7 @@ def main():
 
     current_calendar_y = 26
     for cal_item in cal_items:
+        font_color = 'black'
         text = black
         if cal_item['today']:
             text = red
