@@ -105,8 +105,9 @@ def main():
     
     # Updated Time
     updatetime = datetime.datetime.now()
-    text_width = red.textwidth(updatetime.strftime("%d %b %H:%m"), 'robotoBlack18')
-    red.text(880 - text_width, 0, updatetime.strftime("%d %b %H:%m"), 'robotoBlack18', 'white')
+    updatetime = updatetime.strftime("%d %b %H:%m")
+    text_width = red.textwidth(updatetime, 'robotoBlack18')
+    red.text(880 - text_width, 0, updatetime, 'robotoBlack18', 'white')
 
     # Set some things
     calendar_date_font = "robotoRegular14"
