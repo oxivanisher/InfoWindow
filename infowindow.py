@@ -103,12 +103,6 @@ def main():
     text_width = red.textwidth("TASKS", 'robotoBlack24')
     red.text(737 - text_width, 0, "TASKS", 'robotoBlack24', 'white')
     
-    # Updated Time
-    updatetime = datetime.datetime.now()
-    updatetime = updatetime.strftime("%d %b %H:%m")
-    text_width = red.textwidth(updatetime, 'robotoRegular14') * 2
-    red.text(880 - text_width, 0, updatetime, 'robotoRegular14', 'white')
-
     # Set some things
     calendar_date_font = "robotoRegular14"
     calendar_entry_font = "robotoBlack18"
@@ -264,6 +258,12 @@ def main():
                 new_image_found += 1
 
     if new_image_found < 2:
+            # Updated Time
+            updatetime = datetime.datetime.now()
+            updatetime = updatetime.strftime("%d %b %H:%m")
+            text_width = red.textwidth(updatetime, 'robotoRegular14') * 2
+            red.text(877 - text_width, 0, updatetime, 'robotoRegular14', 'white')
+        
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(red.tmpImagePath)
             black.image.save(black.tmpImagePath)
