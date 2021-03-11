@@ -262,7 +262,9 @@ def main():
             updatetime = datetime.datetime.now()
             updatetime = updatetime.strftime("%d %b %H:%m")
             text_width = red.textwidth(updatetime, 'robotoRegular14') * 2
-            red.text(877 - text_width, 0, updatetime, 'robotoRegular14', 'white')
+            red.text(880 - text_width, 0, updatetime, 'robotoRegular14', 'white')
+            red.image = red.image.rotate(rotation)
+
         
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(red.tmpImagePath)
