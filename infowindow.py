@@ -257,15 +257,7 @@ def main():
             if not diff.getbbox():
                 new_image_found += 1
 
-    if new_image_found < 2:
-            # Updated Time
-            updatetime = datetime.datetime.now()
-            updatetime = updatetime.strftime("%d %b %H:%m")
-            text_width = red.textwidth(updatetime, 'robotoRegular14') * 2
-            red.text(880 - text_width, 0, updatetime, 'robotoRegular14', 'white')
-            red.image = red.image.rotate(rotation)
-
-        
+    if new_image_found < 2:      
             logging.info("New information in the image detected. Updating the screen.")
             red.image.save(red.tmpImagePath)
             black.image.save(black.tmpImagePath)
