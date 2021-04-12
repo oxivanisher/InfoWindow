@@ -151,31 +151,37 @@ def main():
 
     # DISPLAY GROCY INFO
     # =========================================================================
-    grocy_items = grocy.list()
-    logging.debug("Grocy Items")
-    logging.debug("-----------------------------------------------------------------------")
+    try:
+      grocy_items = grocy.list()
+      logging.debug("Grocy Items")
+      logging.debug("-----------------------------------------------------------------------")
 
-    #(t_x, t_y) = red.getFont(tasks_font).getsize('JgGj')
-    (t_x, t_y) = get_max_char_size(red, string.printable, tasks_font)
-    line_height = t_y + (2 * infowindow_opts["cell_spacing"])
+      #(t_x, t_y) = red.getFont(tasks_font).getsize('JgGj')
+      (t_x, t_y) = get_max_char_size(red, string.printable, tasks_font)
+      line_height = t_y + (2 * infowindow_opts["cell_spacing"])
 
-    current_task_y = 25
-    for grocy_item in grocy_items:
-        (np_x, np_y) = red.getFont(tasks_font).getsize(str(grocy_item['days']) + " ")
-        if int(grocy_item['days']) < 3:
-            text = red
-        else:
-            text = black
+      current_task_y = 25
+      for grocy_item in grocy_items:
+          (np_x, np_y) = red.getFont(tasks_font).getsize(str(grocy_item['days']) + " ")
+          if int(grocy_item['days']) < 3:
+              text = red
+          else:
+              text = black
       
-        text.text(298, (current_task_y + infowindow_opts["cell_spacing"]), str(grocy_item['days'] + " "), tasks_font)
-        (op_x, op_y) = text.getFont(tasks_font).getsize(black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x))
-        text.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), text.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
-        red.line(298, (current_task_y + line_height + 1), 582, (current_task_y + line_height + 1))
+          text.text(298, (current_task_y + infowindow_opts["cell_spacing"]), str(grocy_item['days'] + " "), tasks_font)
+          (op_x, op_y) = text.getFont(tasks_font).getsize(black.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x))
+          text.text(583 - op_x, (current_task_y + infowindow_opts["cell_spacing"]), text.truncate(grocy_item['content'].encode(charset).strip(), tasks_font, 286 - np_x), tasks_font)
+          red.line(298, (current_task_y + line_height + 1), 582, (current_task_y + line_height + 1))
 
 
-        # set next loop height
-        current_task_y = (current_task_y + line_height + 2)
-        logging.debug("ITEM: %s" % grocy_item['content'].encode(charset).strip())
+          # set next loop height
+          current_task_y = (current_task_y + line_height + 2)
+          logging.debug("ITEM: %s" % grocy_item['content'].encode(charset).strip())
+      except:
+        logging.debug("Grocy Failed")
+        logging.debug("-----------------------------------------------------------------------")
+        red.text(298, (25 + infowindow_opts["cell_spacing"]), str("Grocy failed to load"), tasks_font)
+        
 
     # DISPLAY CALENDAR INFO
     # =========================================================================
