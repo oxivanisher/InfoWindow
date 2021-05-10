@@ -67,7 +67,7 @@ class Cal:
 
             # Sunrise and Sunset.
             if self.timeformat == "12h":
-                st_date = dt.strftime(dtparse(start), format='%a %d-%h')
+                st_date = dt.strftime(dtparse(start), format='%a %d-%m')
                 st_time = dt.strftime(dtparse(start), format='%I:%M %p')
             else:
                 st_date = dt.strftime(dtparse(start), format='%d.%m')
