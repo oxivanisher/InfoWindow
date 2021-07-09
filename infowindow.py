@@ -103,6 +103,12 @@ def main():
     text_width = red.textwidth("TASKS", 'robotoBlack24')
     red.text(737 - text_width, 0, "TASKS", 'robotoBlack24', 'white')
     
+    #Date header
+    text_width = black.textwidth(datetime.today().strftime('%a'), 'robotoBlack18')
+    black.text(297 - text_width, 0, datetime.today().strftime('%a'), 'robotoBlack18', 'black')
+    text_width = black.textwidth(datetime.today().strftime('%-d %b'), 'robotoBlack18')
+    black.text(594 - text_width, 0, datetime.today().strftime('%a'), 'robotoBlack18', 'black')
+ 
     # Set some things
     calendar_date_font = "robotoRegular14"
     calendar_entry_font = "robotoBlack18"
