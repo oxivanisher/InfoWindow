@@ -99,7 +99,7 @@ def main():
     # Titles
     text_width = red.textwidth("CALENDAR", 'robotoBlack24')
 #    red.text(143 - text_width, 0, "CALENDAR", 'robotoBlack24', 'white')
-    red.text(143 - text_width, 0, date.today().strftime('%a'), 'robotoBlack24', 'white')
+    red.text(143 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
     text_width = red.textwidth("FRIDGE", 'robotoBlack24')
     red.text(440 - text_width, 0, "FRIDGE", 'robotoBlack24', 'white')
     text_width = red.textwidth("TASKS", 'robotoBlack24')
@@ -107,9 +107,9 @@ def main():
     
     #Date header
     text_width = black.textwidth(date.today().strftime('%a'), 'robotoBlack18')
-    black.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack24', 'white')
-    text_width = black.textwidth(date.today().strftime('%-d %b'), 'robotoBlack24')
-    black.text(594 - text_width, 0, date.today().strftime('%a'), 'robotoBlack24', 'white')
+    black.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
+    text_width = black.textwidth(date.today().strftime('%-d %b'), 'robotoBlack18')
+    black.text(594 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
     logging.info(date.today().strftime('%-d %b'))
     
     # Set some things
