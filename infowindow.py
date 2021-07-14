@@ -106,10 +106,10 @@ def main():
     
     #Date header
     text_width = black.textwidth(date.today().strftime('%a'), 'robotoBlack18')
-    black.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
-    text_width = black.textwidth(date.today().strftime('%-d %b'), 'robotoBlack18')
-    black.text(594 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
-    logging.info(date.today().strftime('%a'))
+    black.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack24', 'white')
+    text_width = black.textwidth(date.today().strftime('%-d %b'), 'robotoBlack24')
+    black.text(594 - text_width, 0, date.today().strftime('%a'), 'robotoBlack24', 'white')
+    logging.info(date.today().strftime('%-d %b'))
     
     # Set some things
     calendar_date_font = "robotoRegular14"
