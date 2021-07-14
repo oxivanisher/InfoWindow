@@ -99,7 +99,7 @@ def main():
     # Titles
     text_width = red.textwidth("CALENDAR", 'robotoBlack24')
 #    red.text(143 - text_width, 0, "CALENDAR", 'robotoBlack24', 'white')
-    red.text(143 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
+    red.text(143 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
     text_width = red.textwidth("FRIDGE", 'robotoBlack24')
     red.text(440 - text_width, 0, "FRIDGE", 'robotoBlack24', 'white')
     text_width = red.textwidth("TASKS", 'robotoBlack24')
