@@ -106,9 +106,9 @@ def main():
     
     #Date header
     text_width = red.textwidth(date.today().strftime('%a'), 'robotoBlack18')
-    red.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
+    red.text(292 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
     text_width = red.textwidth(date.today().strftime('%-d %b'), 'robotoBlack18')
-    red.text(594 - text_width, 0, date.today().strftime('%-d %b'), 'robotoBlack18', 'white')
+    red.text(589 - text_width, 0, date.today().strftime('%-d %b'), 'robotoBlack18', 'white')
     logging.info(date.today().strftime('%-d %b'))
     
     # Set some things
