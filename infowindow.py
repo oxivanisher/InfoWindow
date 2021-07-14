@@ -6,6 +6,7 @@ import json
 import logging
 import string
 import datetime
+from datetime import date
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -104,10 +105,10 @@ def main():
     red.text(737 - text_width, 0, "TASKS", 'robotoBlack24', 'white')
     
     #Date header
-    text_width = black.textwidth(datetime.now().strftime('%a'), 'robotoBlack18')
-    black.text(297 - text_width, 0, datetime.now().strftime('%a'), 'robotoBlack18', 'black')
-    text_width = black.textwidth(datetime.now().strftime('%-d %b'), 'robotoBlack18')
-    black.text(594 - text_width, 0, datetime.now().strftime('%a'), 'robotoBlack18', 'black')
+    text_width = black.textwidth(date.today().strftime('%a'), 'robotoBlack18')
+    black.text(297 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
+    text_width = black.textwidth(date.today().strftime('%-d %b'), 'robotoBlack18')
+    black.text(594 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'black')
  
     # Set some things
     calendar_date_font = "robotoRegular14"
