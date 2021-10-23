@@ -5,8 +5,8 @@ import os.path
 import json
 import logging
 import string
-import datetime
-from datetime import date
+#import datetime
+from datetime import datetime
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -105,7 +105,7 @@ def main():
     red.text(737 - text_width, 0, "TASKS", 'robotoBlack24', 'white')
     
     #Date header
-    text_width = red.textwidth(date.today().strftime('%a')), 'robotoBlack18')
+    text_width = red.textwidth(date.today().strftime('%a'), 'robotoBlack18')
     red.text(292 - text_width, 0, date.today().strftime('%a'), 'robotoBlack18', 'white')
     text_width = red.textwidth(date.today().strftime('%-d %b'), 'robotoBlack18')
     red.text(589 - text_width, 0, date.today().strftime('%-d %b'), 'robotoBlack18', 'white')
