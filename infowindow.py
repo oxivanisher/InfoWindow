@@ -137,10 +137,10 @@ def main():
     current_task_y = 25
     for todo_item in todo_items:
         if todo_item['due']:
-            date = datetime.datetime.strptime(todo_item['due'][0:10], '%Y-%m-%d').date()
+            caldate = datetime.datetime.strptime(todo_item['due'][0:10], '%Y-%m-%d').date()
         else:
-            date = datetime.datetime.now().date()
-        if datetime.datetime.now().date() >= date:
+            calcdate = datetime.datetime.now().date()
+        if datetime.datetime.now().date() >= caldate:
             
             if 2156103501 in todo_item['labels']:
                 red.text(595, (current_task_y + infowindow_opts["cell_spacing"]), red.truncate(todo_item['content'].encode(charset).strip(), tasks_font, 286), tasks_font)
@@ -234,7 +234,7 @@ def main():
         # draw event date
         text.text((infowindow_opts["cell_spacing"]),
                 (current_calendar_y + infowindow_opts["cell_spacing"]),
-                cal_item['date'].encode(charset).strip(), calendar_date_font, font_color)
+                cal_item['caldate'].encode(charset).strip(), calendar_date_font, font_color)
         # draw event time
         text.text((infowindow_opts["cell_spacing"]),
                 (current_calendar_y + ((line_height - 2 * infowindow_opts["cell_spacing"]) / 2)),
@@ -249,7 +249,7 @@ def main():
 
         # set new line height for next round
         current_calendar_y = (current_calendar_y + line_height + 2)
-        # logging.debug("ITEM: "+str(cal_item['date']), str(cal_item['time']), str(cal_item['content']))
+        # logging.debug("ITEM: "+str(cal_item['caldate']), str(cal_item['time']), str(cal_item['content']))
         logging.debug("ITEM: %s" % cal_item['content'].encode(charset).strip())
 
     # Write to screen
