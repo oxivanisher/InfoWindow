@@ -83,6 +83,7 @@ def get_max_char_size(black, chars, font):
 def main():
     # Instantiate API modules
     logging.info(str(todo_opts))
+    logging.info(str(calendar_opts))
     todo = modTodo.ToDo(todo_opts)
     cal = modCalendar.Cal(calendar_opts)
     grocy = modGrocy.test(grocy_opts)
