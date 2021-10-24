@@ -32,7 +32,6 @@ with open(config_path) as config_file:
 rotation = config_data["general"]["rotation"]
 charset = config_data["general"]["charset"]
 todo_opts = config_data["todo"]
-logging.info(todo_opts)
 grocy_opts = config_data["grocy"]
 calendar_opts = config_data["calendar"]
 infowindow_opts = {}
@@ -83,6 +82,7 @@ def get_max_char_size(black, chars, font):
 # Main Program ################################################################
 def main():
     # Instantiate API modules
+    logging.info(str(todo_opts))
     todo = modTodo.ToDo(todo_opts)
     cal = modCalendar.Cal(calendar_opts)
     grocy = modGrocy.test(grocy_opts)
