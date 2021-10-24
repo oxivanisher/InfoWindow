@@ -188,10 +188,10 @@ def main():
           # set next loop height
           current_task_y = (current_task_y + line_height + 2)
           logging.debug("ITEM: %s" % grocy_item['content'].encode(charset).strip())
-    except:
-      logging.debug("Grocy Failed")
-      logging.debug("-----------------------------------------------------------------------")
-      red.text(298, (25 + infowindow_opts["cell_spacing"]), str("Grocy failed to load"), tasks_font)
+      except:
+        logging.debug("Grocy Failed")
+        logging.debug("-----------------------------------------------------------------------")
+        red.text(298, (25 + infowindow_opts["cell_spacing"]), str("Grocy failed to load"), tasks_font)
         
 
     # DISPLAY CALENDAR INFO
