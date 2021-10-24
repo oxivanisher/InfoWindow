@@ -32,6 +32,7 @@ with open(config_path) as config_file:
 rotation = config_data["general"]["rotation"]
 charset = config_data["general"]["charset"]
 todo_opts = config_data["todo"]
+logging.info(todo_opts)
 grocy_opts = config_data["grocy"]
 calendar_opts = config_data["calendar"]
 infowindow_opts = {}
