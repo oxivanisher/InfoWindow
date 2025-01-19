@@ -1,9 +1,9 @@
 Pillow
-spidev
+spidev; platform_system == "Linux" and "arm" in platform_machine
 google-api-python-client
 google-auth-oauthlib
 python-dateutil
 requests
 todoist-python
-RPi.GPIO
-gpiozero
+RPi.GPIO; platform_system == "Linux" and "arm" in platform_machine
+gpiozero; platform_system == "Linux" and "arm" in platform_machine
