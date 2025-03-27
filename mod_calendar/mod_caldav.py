@@ -1,10 +1,20 @@
 from caldav import DAVClient
 from dateutil.parser import parse as dtparse
 from datetime import datetime as dt, timedelta
+import re
 import logging
 
 # Disable excessive logging from caldav library
 # logging.getLogger("caldav").setLevel(logging.WARNING)
+
+def replace_birth_year_with_age(summary):
+    match = re.search(r"\((\d{4})\)", summary)  # Find (YYYY)
+    if match:
+        birth_year = int(match.group(1))
+        current_year = dt.now().year
+        age = current_year - birth_year
+        summary = summary.replace(f"({birth_year})", f"(Age {age})")  # Replace with age
+    return summary
 
 class Cal:
     def __init__(self, options):
@@ -52,6 +62,9 @@ class Cal:
                     summary = comp.get("SUMMARY", "No Title")
                     if summary in self.ignored:
                         continue
+                    # replace birthday emoji with ascii
+                    summary = summary.replace("🎂", "[_i_]")
+                    summary = replace_birth_year_with_age(summary)
 
                     start = comp.get("DTSTART").dt
                     if isinstance(start, dt):  # Ensure it's datetime, not date
