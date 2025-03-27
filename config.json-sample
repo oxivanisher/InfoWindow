@@ -9,10 +9,24 @@
         "api_key": "1234"
     },
     "calendar": {
-        "additional": ["Contacts", "Birthdays"],
         "ignored": ["Buy ticket!"],
         "today_text_color": "red",
         "today_background_color": "white"
+    },
+    "calendar_google": {
+        "additional": ["Contacts", "Birthdays"],
+    },
+    "calendar_caldav": {
+        "caldav_url": "https://your.domain.tld/some/caldav",
+        "username": "john",
+        "password": "supersecret",
+        "additional": ["Contact birthdays", "some calendar"]
+    },
+    "todo_caldav": {
+        "caldav_url": "https://your.domain.tld/some/caldav",
+        "username": "john",
+        "password": "supersecret",
+        "additional": ["another calendar"]
     },
     "weather": {
         "api_key": "1234",

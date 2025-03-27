@@ -7,13 +7,13 @@ import logging
 # Silence goofy google deprecated errors
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 
-
 class Cal:
     def __init__(self, options):
+        logging.debug("Initializing Module: Calendar: Google")
         ga = mod_google_auth.GoogleAuth()
         self.creds = ga.login()
         self.timeformat = options["timeformat"]
-        self.additional = options["additional"]
+        self.additional = options["calendar_google"]["additional"]
         self.ignored = options["ignored"]
         self.sunday_first_dow = options["sunday_first_dow"]
 
@@ -86,6 +86,7 @@ class Cal:
                 "content": events[event_key]['summary'],
                 "today": today,
                 "week": int(week),
+                "start_ts": dt.timestamp(dtparse(start)),
                 "days_away": (event_start_ts_now - day_start_ts_now) // 86400, # days away
                 "weeks_away": (event_start_ts_now - day_start_ts_now) // 604800 # weeks away
             })
