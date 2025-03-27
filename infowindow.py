@@ -13,8 +13,10 @@ from mod_infowindow import infowindow
 # CALENDAR: mod_google, mod_ical
 # WEATHER: mod_owm, mod_wunderground
 from mod_utils import iw_utils
-from mod_todo import mod_google as modTodo  # TODO
-from mod_calendar import mod_google as modCalendar  # CALENDAR
+from mod_todo import mod_google as modTodoGoogle  # Google todo
+from mod_todo import mod_caldav as modTodoCaldav  # Caldav todo
+from mod_calendar import mod_google as modCalendarGoogle  # Google calendar
+from mod_calendar import mod_caldav as modCalendarCaldav  # Caldav calendar
 from mod_weather import mod_owm as modWeather  # WEATHER
 
 # TODO: Create dictionaries for API args. so that they can be custom.
@@ -27,12 +29,16 @@ with open(config_path) as config_file:
 # Rotation. 0 for desktop, 180 for hanging upside down
 rotation = config_data["general"]["rotation"]
 todo_opts = config_data["todo"]
+todo_opts["timeformat"] = config_data["general"]["timeformat"]
+todo_opts["todo_caldav"] = config_data["todo_caldav"]
 calendar_opts = config_data["calendar"]
 weather_opts = config_data["weather"]
 infowindow_opts = {}
 # give the timeformat to all the modules needing it
 calendar_opts["timeformat"] = config_data["general"]["timeformat"]
 calendar_opts["sunday_first_dow"] = config_data["general"]["sunday_first_dow"]
+calendar_opts["calendar_google"] = config_data["calendar_google"]
+calendar_opts["calendar_caldav"] = config_data["calendar_caldav"]
 weather_opts["timeformat"] = config_data["general"]["timeformat"]
 infowindow_opts["timeformat"] = config_data["general"]["timeformat"]
 infowindow_opts["cell_spacing"] = config_data["general"]["cell_spacing"]
@@ -43,7 +49,6 @@ infowindow_opts["cell_spacing"] = config_data["general"]["cell_spacing"]
 # Setup Logging -  change to logging.DEBUG if you are having issues.
 logging.basicConfig(level=logging.DEBUG)
 logging.info("Configuration Complete")
-
 
 # helper to calculate max char width and height
 def get_max_char_size(iw, chars, font):
@@ -68,8 +73,10 @@ def render_centered_text(iw, text, font, color, center_position, y_position):
 # Main Program ################################################################
 def main():
     # Instantiate API modules
-    todo = modTodo.ToDo(todo_opts)
-    cal = modCalendar.Cal(calendar_opts)
+    todoGoogle = modTodoGoogle.ToDo(todo_opts)
+    todoCaldav = modTodoCaldav.ToDo(todo_opts)
+    calGoogle = modCalendarGoogle.Cal(calendar_opts)
+    calCaldav = modCalendarCaldav.Cal(calendar_opts)
     weather = modWeather.Weather(weather_opts)
 
     # Setup e-ink initial drawings
@@ -105,7 +112,10 @@ def main():
 
     # DISPLAY TO DO INFO
     # =========================================================================
-    todo_items = todo.list()
+    todo_items = sorted(
+        todoGoogle.list() + todoCaldav.list(),
+        key=lambda x: (x["priority"] == 0, x["priority"])
+    )
     logging.debug("Todo Items")
     logging.debug("-----------------------------------------------------------------------")
 
@@ -131,7 +141,7 @@ def main():
 
     # DISPLAY CALENDAR INFO
     # =========================================================================
-    cal_items = cal.list()
+    cal_items = sorted(calGoogle.list() + calCaldav.list(), key=lambda x: x["start_ts"], reverse=False)
     logging.debug("Calendar Items")
     logging.debug("-----------------------------------------------------------------------")
 

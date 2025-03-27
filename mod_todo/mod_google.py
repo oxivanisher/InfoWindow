@@ -6,19 +6,15 @@ import logging
 today = date.today()
 tomorrow = date.today() + timedelta(days=1)
 
-logger = logging.getLogger(__name__)
-
-
 class ToDo:
     def __init__(self, api_key):
         # This module authenticates from Google Auth API. We pull in the auth module 
         # wrapper to keep it clean. 
-        logger.info("Initializing Module: ToDo: GOOGLE")
+        logging.debug("Initializing Module: ToDo: Google")
         ga = mod_google_auth.GoogleAuth()
         self.creds = ga.login()
 
     def list(self):
-        logging.info("Entering ToDo.list()")
         service = build('tasks', 'v1', credentials=self.creds)
 
         tasks_with_due = []
@@ -38,7 +34,7 @@ class ToDo:
                         else:
                             items_without_due.append({
                                 "content": task['title'],
-                                "priority": task['position'],
+                                "priority": int(task['position']),
                                 "today": False
                             })
 
@@ -47,7 +43,8 @@ class ToDo:
             due = datetime.fromisoformat(task['due'].replace("Z", "+00:00")).date()
             if due < today:
                 is_today = True
-                task['title'] = "Overdue: %s" % task['title']
+                task['title'] = f"Overdue: {task['title']}"
+                task['position'] = 1
             elif due == today:
                 is_today = True
             elif due == tomorrow:
@@ -57,7 +54,7 @@ class ToDo:
 
             items_with_due.append({
                 "content": task['title'],
-                "priority": task['position'],
+                "priority": int(task['position']),
                 "today": is_today
             })
 

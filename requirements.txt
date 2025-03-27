@@ -7,3 +7,4 @@ requests
 todoist-python
 RPi.GPIO; platform_system == "Linux" and "arm" in platform_machine
 gpiozero; platform_system == "Linux" and "arm" in platform_machine
+caldav

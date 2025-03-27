@@ -19,10 +19,12 @@ to the data. In your face reminder.
 
 ## Features
 * **Calendar**
-  * Google Calendar is the only calendar currently supported
+  * Google Calendar
+  * CalDAV Calendar (added for Nextcloud support)
 * **Todo List**
   * Todoist
   * Teamwork.com
+  * CalDAV Todos (added for Nextcloud support)
 * **Weather**
   * Open Weather Map current data only. Future plan for forecast data.
 
@@ -32,7 +34,7 @@ Activate SPI on your Raspberry Pi by using the `raspi-config` tool under Interfa
 
 Also for some RaspiOS versions, you have to install the `libopenjp2-7` package: 
 ```bash
-sudo apt-get install libopenjp2-7
+sudo apt-get install libopenjp2-7 libxslt1
 ```
 
 ### Get software
