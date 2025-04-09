@@ -1,6 +1,7 @@
 from caldav import DAVClient
 from dateutil.parser import parse as dtparse
 from datetime import datetime as dt, timedelta
+import pytz
 import re
 import logging
 
@@ -28,12 +29,21 @@ class Cal:
         self.additional = options["calendar_caldav"]["additional"]
         self.ignored = options["ignored"]
         self.sunday_first_dow = options["sunday_first_dow"]
+        self.timezone = pytz.timezone(options["timezone"])
 
     def list(self):
         events = []
         items = []
-        now = dt.utcnow()
+        # now = dt.utcnow()
+        now = dt.now(self.timezone)
+        # now = dt.now()
         day_start_ts_now = dt.timestamp(now.replace(hour=0, minute=0, second=0, microsecond=0))
+        #
+        # today = dt.now(self.timezone).date()
+        # midnight_today = self.timezone.localize(dt.combine(today, dt.min.time()))
+        # last_second_tomorrow = self.timezone.localize(dt.combine(today + timedelta(days=1), dt.max.time()))
+        # midnight_today_utc = midnight_today.astimezone(pytz.utc)
+        # last_second_tomorrow_utc = last_second_tomorrow.astimezone(pytz.utc)
 
         # Fetch calendars
         principal = self.client.principal()
@@ -80,7 +90,30 @@ class Cal:
 
         for start_str, summary in events:
             start = dtparse(start_str)
-            today = start.date() <= dt.today().date()
+            today = start.date() <= dt.today().date() # oxi orig
+            # today = start.date() == dt.today().date() # chatgpt 1
+
+            # event_end = comp.get("DTEND")
+            # if event_end:
+            #     end = event_end.dt
+            #     if isinstance(end, dt):  # Ensure it's a datetime object
+            #         if end.tzinfo is None:  # If naive, localize it
+            #             end = self.timezone.localize(end)  # <-- This fixes the issue
+            #         else:
+            #             end = end.astimezone(self.timezone)
+            #     else:  # If it's a date, set it to the end of that day
+            #         end = dt.combine(end, dt.max.time())
+            #         end = self.timezone.localize(end)
+            # else:
+            #     end = start  # If no DTEND, assume it's a single-instance event
+            #
+            # now_local = dt.now(self.timezone)
+            #
+            # # Debugging output
+            # print(f"DEBUG: end={end} (tzinfo={end.tzinfo}), now_local={now_local} (tzinfo={now_local.tzinfo})")
+            #
+            # if end < now_local:
+            #     continue  # Skip past events
 
             if self.timeformat == "12h":
                 st_date = start.strftime('%m-%d')
