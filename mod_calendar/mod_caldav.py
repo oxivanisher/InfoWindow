@@ -22,18 +22,24 @@ def replace_birth_year_with_age(summary):
 class Cal:
     def __init__(self, options):
         logging.debug("Initializing Module: Calendar: CalDAV")
-        self.client = DAVClient(
-            url=options["calendar_caldav"]["caldav_url"],
-            username=options["calendar_caldav"]["username"],
-            password=options["calendar_caldav"]["password"],
-        )
-        self.timeformat = options["timeformat"]
-        self.additional = options["calendar_caldav"]["additional"]
-        self.ignored = options["ignored"]
-        self.sunday_first_dow = options["sunday_first_dow"]
-        self.local_tz = gettz(options.get("calendar_caldav", {}).get("timezone", "Europe/Zurich"))
+        self.enabled = options["calendar_caldav"]["enabled"]
+        if self.enabled:
+            self.client = DAVClient(
+                url=options["calendar_caldav"]["caldav_url"],
+                username=options["calendar_caldav"]["username"],
+                password=options["calendar_caldav"]["password"],
+            )
+            self.timeformat = options["timeformat"]
+            self.additional = options["calendar_caldav"]["additional"]
+            self.ignored = options["ignored"]
+            self.sunday_first_dow = options["sunday_first_dow"]
+            self.local_tz = gettz(options.get("calendar_caldav", {}).get("timezone", "Europe/Zurich"))
 
     def list(self):
+        if not self.enabled:
+            logging.debug("Calendar: CalDAV not enabled")
+            return []
+
         events = []
         items = []
         now = dt.now(self.local_tz)
@@ -49,7 +55,7 @@ class Cal:
 
         for calendar in selected_calendars:
             logging.debug(f"Fetching calendar: {calendar.name}")
-            results = calendar.search(start=now - timedelta(days=1), end=now + timedelta(days=30), event=True)
+            results = calendar.search(start=now - timedelta(days=1), end=now + timedelta(days=60), event=True)
 
             logging.debug(f"Found {len(results)} results")
 

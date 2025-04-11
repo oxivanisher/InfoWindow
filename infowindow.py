@@ -30,6 +30,7 @@ with open(config_path) as config_file:
 rotation = config_data["general"]["rotation"]
 todo_opts = config_data["todo"]
 todo_opts["timeformat"] = config_data["general"]["timeformat"]
+todo_opts["todo_google"] = config_data["todo_google"]
 todo_opts["todo_caldav"] = config_data["todo_caldav"]
 calendar_opts = config_data["calendar"]
 weather_opts = config_data["weather"]

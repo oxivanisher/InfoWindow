@@ -15,15 +15,21 @@
         "today_background_color": "white"
     },
     "calendar_google": {
+        "enabled": true,
         "additional": ["Contacts", "Birthdays"],
     },
     "calendar_caldav": {
+        "enabled": true,
         "caldav_url": "https://your.domain.tld/some/caldav",
         "username": "john",
         "password": "supersecret",
         "additional": ["Contact birthdays", "some calendar"]
     },
+    "todo_google": {
+        "enabled": true
+    },
     "todo_caldav": {
+        "enabled": true,
         "caldav_url": "https://your.domain.tld/some/caldav",
         "username": "john",
         "password": "supersecret",

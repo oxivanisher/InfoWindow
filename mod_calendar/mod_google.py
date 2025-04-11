@@ -10,14 +10,20 @@ logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 class Cal:
     def __init__(self, options):
         logging.debug("Initializing Module: Calendar: Google")
-        ga = mod_google_auth.GoogleAuth()
-        self.creds = ga.login()
-        self.timeformat = options["timeformat"]
-        self.additional = options["calendar_google"]["additional"]
-        self.ignored = options["ignored"]
-        self.sunday_first_dow = options["sunday_first_dow"]
+        self.enabled = options["calendar_google"]["enabled"]
+        if self.enabled:
+            ga = mod_google_auth.GoogleAuth()
+            self.creds = ga.login()
+            self.timeformat = options["timeformat"]
+            self.additional = options["calendar_google"]["additional"]
+            self.ignored = options["ignored"]
+            self.sunday_first_dow = options["sunday_first_dow"]
 
     def list(self):
+        if not self.enabled:
+            logging.debug("Calendar: Google not enabled")
+            return []
+
         calendar_ids = []
         events = {}
         items = []

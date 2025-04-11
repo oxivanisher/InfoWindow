@@ -8,16 +8,22 @@ tomorrow = date.today() + timedelta(days=1)
 class ToDo:
     def __init__(self, options):
         logging.debug("Initializing Module: ToDo: CalDAV")
-        self.client = DAVClient(
-            url=options["todo_caldav"]["caldav_url"],
-            username=options["todo_caldav"]["username"],
-            password=options["todo_caldav"]["password"],
-        )
-        self.timeformat = options["timeformat"]
-        self.additional = options["todo_caldav"]["additional"]
-        # self.sunday_first_dow = options["sunday_first_dow"]
+        self.enabled = options["todo_caldav"]["enabled"]
+        if self.enabled:
+            self.client = DAVClient(
+                url=options["todo_caldav"]["caldav_url"],
+                username=options["todo_caldav"]["username"],
+                password=options["todo_caldav"]["password"],
+            )
+            self.timeformat = options["timeformat"]
+            self.additional = options["todo_caldav"]["additional"]
+            # self.sunday_first_dow = options["sunday_first_dow"]
 
     def list(self):
+        if not self.enabled:
+            logging.debug("Todo: CalDAV not enabled")
+            return []
+
         todos_without_due = []
         todos_with_due = []
         todos = []
@@ -36,7 +42,7 @@ class ToDo:
         for calendar in selected_calendars:
             logging.debug(f"Fetching todos from calendar: {calendar.name}")
             results = calendar.search(
-                start=now - timedelta(days=30), end=now + timedelta(days=30), todo=True
+                start=now - timedelta(days=30), end=now + timedelta(days=60), todo=True
             )
             logging.debug(f"Found {len(results)} results: {results}")
 

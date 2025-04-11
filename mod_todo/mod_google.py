@@ -7,14 +7,20 @@ today = date.today()
 tomorrow = date.today() + timedelta(days=1)
 
 class ToDo:
-    def __init__(self, api_key):
+    def __init__(self, options):
         # This module authenticates from Google Auth API. We pull in the auth module 
         # wrapper to keep it clean. 
         logging.debug("Initializing Module: ToDo: Google")
-        ga = mod_google_auth.GoogleAuth()
-        self.creds = ga.login()
+        self.enabled = options["todo_google"]["enabled"]
+        if self.enabled:
+            ga = mod_google_auth.GoogleAuth()
+            self.creds = ga.login()
 
     def list(self):
+        if not self.enabled:
+            logging.debug("Todo: Google not enabled")
+            return []
+
         service = build('tasks', 'v1', credentials=self.creds)
 
         tasks_with_due = []
