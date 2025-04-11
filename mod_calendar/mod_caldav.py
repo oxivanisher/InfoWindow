@@ -70,7 +70,7 @@ class Cal:
                     if summary in self.ignored:
                         continue
 
-                    summary = summary.replace("\U0001F382", "[_i_]")
+                    summary = summary.replace("\U0001F382", "_i_")
                     summary = replace_birth_year_with_age(summary)
 
                     start_orig = comp.get("DTSTART").dt
