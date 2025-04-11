@@ -48,7 +48,7 @@ infowindow_opts["cell_spacing"] = config_data["general"]["cell_spacing"]
 ###############################################################################
 
 # Setup Logging -  change to logging.DEBUG if you are having issues.
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logging.info("Configuration Complete")
 
 # helper to calculate max char width and height

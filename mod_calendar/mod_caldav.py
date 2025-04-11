@@ -1,6 +1,8 @@
 from caldav import DAVClient
 from dateutil.parser import parse as dtparse
-from datetime import datetime as dt, timedelta
+from dateutil.tz import gettz
+from datetime import datetime as dt, timedelta, time, date
+from dateutil.rrule import rrulestr
 import pytz
 import re
 import logging
@@ -29,42 +31,31 @@ class Cal:
         self.additional = options["calendar_caldav"]["additional"]
         self.ignored = options["ignored"]
         self.sunday_first_dow = options["sunday_first_dow"]
-        self.timezone = pytz.timezone(options["timezone"])
+        self.local_tz = gettz(options.get("calendar_caldav", {}).get("timezone", "Europe/Zurich"))
 
     def list(self):
         events = []
         items = []
-        # now = dt.utcnow()
-        now = dt.now(self.timezone)
-        # now = dt.now()
-        day_start_ts_now = dt.timestamp(now.replace(hour=0, minute=0, second=0, microsecond=0))
-        #
-        # today = dt.now(self.timezone).date()
-        # midnight_today = self.timezone.localize(dt.combine(today, dt.min.time()))
-        # last_second_tomorrow = self.timezone.localize(dt.combine(today + timedelta(days=1), dt.max.time()))
-        # midnight_today_utc = midnight_today.astimezone(pytz.utc)
-        # last_second_tomorrow_utc = last_second_tomorrow.astimezone(pytz.utc)
+        now = dt.now(self.local_tz)
 
         # Fetch calendars
         principal = self.client.principal()
         calendars = principal.calendars()
 
-        # Filter calendars
-        logging.info(f"Available CalDAV calendars: {', '.join([x.name for x in calendars])}")
+        logging.info(f"Available CalDAV calendars: {', '.join([x.name for x in calendars])})")
         selected_calendars = [
             cal for cal in calendars if cal.name in self.additional or not self.additional
         ]
 
         for calendar in selected_calendars:
             logging.debug(f"Fetching calendar: {calendar.name}")
-            results = calendar.search(
-                start=now, end=now + timedelta(days=30), event=True
-            )
-            logging.debug(f"Found {len(results)} results: {results}")
+            results = calendar.search(start=now - timedelta(days=1), end=now + timedelta(days=30), event=True)
+
+            logging.debug(f"Found {len(results)} results")
 
             for event in results:
                 ical = event.icalendar_component
-                logging.debug(f"Event: {event}")
+
                 for comp in ical.walk():
                     if comp.name != "VEVENT":
                         continue
@@ -72,48 +63,78 @@ class Cal:
                     summary = comp.get("SUMMARY", "No Title")
                     if summary in self.ignored:
                         continue
-                    # replace birthday emoji with ascii
-                    summary = summary.replace("🎂", "[_i_]")
+
+                    summary = summary.replace("\U0001F382", "[_i_]")
                     summary = replace_birth_year_with_age(summary)
 
-                    start = comp.get("DTSTART").dt
-                    if isinstance(start, dt):  # Ensure it's datetime, not date
-                        start_str = start.isoformat()
+                    start_orig = comp.get("DTSTART").dt
+                    end_orig = comp.get("DTEND", None)
+                    rrule = comp.get("RRULE")
+                    is_all_day = not isinstance(start_orig, dt)
+
+                    logging.debug(f"Raw DTSTART: {start_orig}, DTEND: {end_orig}, RRULE: {rrule}, is_all_day: {is_all_day}")
+
+                    if rrule:
+                        rrule_str = "RRULE:" + rrule.to_ical().decode()
+                        rule_start = dt.combine(start_orig, time.min).replace(tzinfo=self.local_tz) if is_all_day else start_orig
+                        rule = rrulestr(rrule_str, dtstart=rule_start)
+                        next_occurrence = rule.after(now.replace(hour=0, minute=0, second=0, microsecond=0), inc=True)
+                        if not next_occurrence:
+                            logging.debug(f"No next occurrence found for recurring event: {summary}")
+                            continue
+                        if isinstance(next_occurrence, date) and not isinstance(next_occurrence, dt):
+                            start = dt.combine(next_occurrence, time.min).replace(tzinfo=self.local_tz)
+                        else:
+                            if next_occurrence.tzinfo is None:
+                                start = next_occurrence.replace(tzinfo=self.local_tz)
+                            else:
+                                start = next_occurrence.astimezone(self.local_tz)
+
+                        if is_all_day:
+                            end = start + timedelta(days=1) - timedelta(seconds=1)
+                        else:
+                            end = start + timedelta(hours=1)
                     else:
-                        start = dt.combine(start, dt.min.time())
-                        start_str = start.isoformat()
+                        start = start_orig
+                        if is_all_day:
+                            start = start if isinstance(start, dt) else dt.combine(start, time.min).replace(tzinfo=self.local_tz)
+                            if end_orig:
+                                end_date = end_orig.dt if hasattr(end_orig, 'dt') else end_orig
+                                end = dt.combine(end_date, time.min).replace(tzinfo=self.local_tz) - timedelta(seconds=1)
+                            else:
+                                end = start + timedelta(days=1)
+                        else:
+                            if start.tzinfo is None:
+                                start = pytz.utc.localize(start)
+                            start = start.astimezone(self.local_tz)
 
-                    events.append((start_str, summary))
+                            if end_orig:
+                                end = end_orig.dt if hasattr(end_orig, 'dt') else end_orig
+                                if end.tzinfo is None:
+                                    end = pytz.utc.localize(end)
+                                end = end.astimezone(self.local_tz)
+                            else:
+                                end = start + timedelta(hours=1)
 
-        # Sort events by start date
+                    if end < now:
+                        logging.debug(f"Skipping event (in the past): {summary} (start: {start}, end: {end}, now: {now})")
+                        continue
+
+                    logging.debug(f"Adding event: {summary} at {start.isoformat()} (end: {end.isoformat()})")
+                    events.append((start.isoformat(), summary))
+
+        if not events:
+            return []
+
         events.sort()
+        items = []
 
         for start_str, summary in events:
             start = dtparse(start_str)
-            today = start.date() <= dt.today().date() # oxi orig
-            # today = start.date() == dt.today().date() # chatgpt 1
-
-            # event_end = comp.get("DTEND")
-            # if event_end:
-            #     end = event_end.dt
-            #     if isinstance(end, dt):  # Ensure it's a datetime object
-            #         if end.tzinfo is None:  # If naive, localize it
-            #             end = self.timezone.localize(end)  # <-- This fixes the issue
-            #         else:
-            #             end = end.astimezone(self.timezone)
-            #     else:  # If it's a date, set it to the end of that day
-            #         end = dt.combine(end, dt.max.time())
-            #         end = self.timezone.localize(end)
-            # else:
-            #     end = start  # If no DTEND, assume it's a single-instance event
-            #
-            # now_local = dt.now(self.timezone)
-            #
-            # # Debugging output
-            # print(f"DEBUG: end={end} (tzinfo={end.tzinfo}), now_local={now_local} (tzinfo={now_local.tzinfo})")
-            #
-            # if end < now_local:
-            #     continue  # Skip past events
+            now_local = dt.now(self.local_tz)
+            today = start.date() == now_local.date()
+            days_away = (start.date() - now_local.date()).days
+            weeks_away = days_away // 7
 
             if self.timeformat == "12h":
                 st_date = start.strftime('%m-%d')
@@ -123,21 +144,20 @@ class Cal:
                 st_time = start.strftime('%H:%M')
 
             if self.sunday_first_dow:
-                week = start.strftime('%U')
+                week = int(start.strftime('%U'))
             else:
-                week = start.strftime('%W')
-
-            event_start_ts_now = dt.timestamp(start.replace(hour=0, minute=0, second=0, microsecond=0))
+                week = int(start.strftime('%W'))
 
             items.append({
+                "summary": summary,
                 "date": st_date,
                 "time": st_time,
-                "content": summary,
+                "week": week,
+                "start_ts": start.timestamp(),
                 "today": today,
-                "week": int(week),
-                "start_ts": dt.timestamp(dtparse(start_str)),
-                "days_away": (event_start_ts_now - day_start_ts_now) // 86400,  # days away
-                "weeks_away": (event_start_ts_now - day_start_ts_now) // 604800  # weeks away
+                "days_away": days_away,
+                "weeks_away": weeks_away,
+                "content": f"{summary}",
             })
 
         return items
