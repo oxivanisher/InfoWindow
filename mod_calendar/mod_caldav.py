@@ -132,6 +132,7 @@ class Cal:
         for start_str, summary in events:
             start = dtparse(start_str)
             now_local = dt.now(self.local_tz)
+            logging.debug(f"Checking if today: event {summary} at {start}, now is {now_local}")
             today = start.date() == now_local.date()
             days_away = (start.date() - now_local.date()).days
             weeks_away = days_away // 7
