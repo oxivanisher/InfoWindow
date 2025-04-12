@@ -24,8 +24,8 @@ class ToDo:
             logging.debug("Todo: CalDAV not enabled")
             return []
 
-        todos_without_due = []
-        todos_with_due = []
+        todos_without_date = []
+        todos_with_date = []
         todos = []
         now = datetime.utcnow()
 
@@ -48,14 +48,14 @@ class ToDo:
 
             for todo in results:
                 ical = todo.icalendar_component
-                logging.debug(f"Todo: {todo}")
+                logging.debug(f"Todo URL: {todo}")
                 for comp in ical.walk():
                     if comp.name != "VTODO":
                         continue
 
                     summary = comp.get("SUMMARY", "No Title")
-                    print(summary)
                     if "DUE" in comp.keys():
+                        logging.debug(f"Found {summary} with DUE")
                         due = comp.get("DUE").dt
                         if isinstance(due, datetime):  # Ensure it's datetime, not date
                             due_str = due.isoformat()
@@ -63,18 +63,31 @@ class ToDo:
                             due = datetime.combine(due, datetime.min.time())
                             due_str = due.isoformat()
 
-                        todos_with_due.append((due_str, comp))
+                        logging.debug(f"Due {due_str}")
+                        todos_with_date.append((due_str, comp))
+
+                    elif "DTSTART" in comp.keys():
+                        logging.debug(f"Found {summary} with DTSTART")
+                        start = comp.get("DTSTART").dt
+                        if isinstance(start, datetime):  # Ensure it's datetime, not date
+                            start_str = start.isoformat()
+                        else:
+                            start = datetime.combine(start, datetime.min.time())
+                            start_str = start.isoformat()
+
+                        logging.debug(f"Start {start_str}")
+                        todos_with_date.append((start_str, comp))
 
                     else:
-                        todos_without_due.append((summary, comp))
+                        todos_without_date.append((summary, comp))
 
-        for summary, todo in sorted(todos_without_due):
+        for summary, todo in sorted(todos_without_date):
             todos.append({"content": todo.get("SUMMARY", "No Title"),
                           "priority": todo.get("PRIORITY", 0),
                           "today": False
                           })
 
-        for due_str, todo in sorted(todos_with_due):
+        for due_str, todo in sorted(todos_with_date, key=lambda tup: tup[0]):
             is_today = False
             due = datetime.fromisoformat(due_str.replace("Z", "+00:00")).date()
             if due < today:
