@@ -55,7 +55,7 @@ class Cal:
 
         for calendar in selected_calendars:
             logging.debug(f"Fetching calendar: {calendar.name}")
-            results = calendar.search(start=now - timedelta(days=1), end=now + timedelta(days=60), event=True)
+            results = calendar.search(start=now - timedelta(days=1), end=now + timedelta(days=60), event=True, expand=True)
 
             logging.debug(f"Found {len(results)} results")
 
