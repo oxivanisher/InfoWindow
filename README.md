@@ -112,6 +112,11 @@ In the google cloud console, do the following things:
    work just fine. Finally, download the json file provided by the google cloud console and store it in the repo
    directory (i.e. `/home/pi/InfoWindow/google_secret.json`) on the Raspberry Pi.  
 
+### CalDAV calendar and ToDo list (Modules)
+To use CalDAV, configure the corresponding modules in the `config.json`. If you use a Nextcloud server, you can
+find the CalDAV URL in the settings of your calendar. As a example (where `USERNAME` is you username):
+`https://cloud.domain.tld/remote.php/dav/calendars/USERNAME`
+
 #### Calendar
 There are are additional sections in the config for this module:
 * additional: A list of additional calendar names (summary) to fetch. To use i.e. birthdays, add "Contacts" (also if
