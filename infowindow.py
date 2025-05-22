@@ -48,8 +48,17 @@ infowindow_opts["cell_spacing"] = config_data["general"]["cell_spacing"]
 # END CONFIGURATION ###########################################################
 ###############################################################################
 
-# Setup Logging -  change to logging.DEBUG if you are having issues.
-logging.basicConfig(level=logging.INFO)
+# Setup Logging - set an env var DEBUG to anything to enable debug
+log_level = logging.INFO
+if os.getenv('DEBUG', False):
+    log_level = logging.DEBUG
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-7s %(message)s',
+    datefmt='%Y-%d-%m %H:%M:%S',
+    level=log_level
+)
+
 logging.info("Configuration Complete")
 
 # helper to calculate max char width and height

@@ -47,7 +47,7 @@ class ToDo:
             logging.debug(f"Found {len(results)} results: {results}")
 
             for todo in results:
-                ical = todo.icalendar_component
+                ical = todo.icalendar_instance
                 logging.debug(f"Todo URL: {todo}")
                 for comp in ical.walk():
                     if comp.name != "VTODO":

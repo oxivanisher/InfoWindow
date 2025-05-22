@@ -60,7 +60,7 @@ class Cal:
             logging.debug(f"Found {len(results)} results")
 
             for event in results:
-                ical = event.icalendar_component
+                ical = event.icalendar_instance
 
                 for comp in ical.walk():
                     if comp.name != "VEVENT":
