@@ -42,7 +42,7 @@ class ToDo:
         for calendar in selected_calendars:
             logging.debug(f"Fetching todos from calendar: {calendar.name}")
             results = calendar.search(
-                start=now - timedelta(days=30), end=now + timedelta(days=60), todo=True
+                start=now - timedelta(days=30), end=now + timedelta(days=60), todo=True, expand=True
             )
             logging.debug(f"Found {len(results)} results: {results}")
 
