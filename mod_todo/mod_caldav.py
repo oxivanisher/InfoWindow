@@ -1,5 +1,5 @@
 from caldav import DAVClient
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, UTC
 import logging
 
 today = date.today()
@@ -27,7 +27,7 @@ class ToDo:
         todos_without_date = []
         todos_with_date = []
         todos = []
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Fetch calendars
         principal = self.client.principal()
