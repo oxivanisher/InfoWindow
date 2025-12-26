@@ -10,39 +10,28 @@ from driver import epd7in5b_V2
 logging.basicConfig(level=logging.INFO)
 logging.info("Screen saver starting")
 
-def display_image(epd, image_data):
-    rgb_image = image_data.convert('RGB')
-    width, height = image_data.size
-    no_red = Image.new('RGB', (width, height), (255, 255, 255))
-    only_red = Image.new('RGB', (width, height), (255, 255, 255))
+def display_image(epd, black_fill, red_fill):
+    width = 800
+    height = 480
 
-    for col in range(width):
-        for row in range(height):
+    # Create 1-bit monochrome images like the working infowindow.py
+    black_image = Image.new('1', (width, height), black_fill)
+    red_image = Image.new('1', (width, height), red_fill)
 
-            r, g, b = rgb_image.getpixel((col, row))
-            no_red.putpixel((col, row), (0, g, b))
-
-            if r == 255 and g == 0 and b == 0:
-                only_red.putpixel((col, row), (0, 0 ,0))
-            else:
-                only_red.putpixel((col, row), (255, 255, 255))
-
-    epd.display(epd.getbuffer(no_red), epd.getbuffer(only_red))
+    epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
 
 
 def main():
     epd = epd7in5b_V2.EPD()
     epd.init()
 
-    width = 800
-    height = 480
-
     logging.info("Display black screen")
-    display_image(epd, Image.new('RGB', (width, height), (0, 0, 0)))
+    display_image(epd, black_fill=0, red_fill=1)
 
     logging.info("Display red screen")
-    display_image(epd, Image.new('RGB', (width, height), (255, 0, 0)))
+    display_image(epd, black_fill=1, red_fill=0)
 
+    logging.info("Display white screen")
     epd.Clear()
     epd.sleep()
     logging.info("Screen saver finished")
