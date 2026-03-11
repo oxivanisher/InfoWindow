@@ -2,6 +2,7 @@
 
 import logging
 import os
+import random
 from PIL import Image
 
 from driver import epd7in5b_V2
@@ -25,14 +26,19 @@ def main():
     epd = epd7in5b_V2.EPD()
     epd.init()
 
-    logging.info("Display black screen")
-    display_image(epd, black_fill=0, red_fill=1)
+    colors = ["black", "red", "white"]
+    random.shuffle(colors)
 
-    logging.info("Display red screen")
-    display_image(epd, black_fill=1, red_fill=0)
+    for color in colors:
+        logging.info(f"Displaying {color} screen")
+        if color == "black":
+            display_image(epd, black_fill=0, red_fill=1)
+        elif color == "red":
+            display_image(epd, black_fill=1, red_fill=0)
+        else:
+            epd.Clear()
 
-    logging.info("Display white screen")
-    epd.Clear()
+    logging.info("Sleeping display")
     epd.sleep()
     logging.info("Screen saver finished")
 
