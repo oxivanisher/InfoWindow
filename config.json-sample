@@ -6,17 +6,14 @@
         "cell_spacing": 2,
         "timezone": "Europe/Zurich"
     },
-    "todo": {
-        "api_key": "1234"
-    },
-    "calendar": {
+I    "calendar": {
         "ignored": ["Buy ticket!"],
         "today_text_color": "red",
         "today_background_color": "white"
     },
     "calendar_google": {
         "enabled": true,
-        "additional": ["Contacts", "Birthdays"],
+        "additional": ["Contacts", "Birthdays"]
     },
     "calendar_caldav": {
         "enabled": true,

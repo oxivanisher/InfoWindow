@@ -1,56 +1,53 @@
 #!/usr/bin/env python3
+"""InfoWindow screensaver — cycles black/red/white screens to prevent ghosting."""
+from __future__ import annotations
 
 import logging
-import os
 import random
-import tempfile
+
 from PIL import Image
 
-from driver import epd7in5b_V2
+from infowindow.display import get_display
 
-# Setup Logging -  change to logging.DEBUG if you are having issues.
 logging.basicConfig(level=logging.INFO)
-logging.info("Screen saver starting")
-
-def display_image(epd, black_fill, red_fill):
-    width = 800
-    height = 480
-
-    # Create 1-bit monochrome images like the working infowindow.py
-    black_image = Image.new('1', (width, height), black_fill)
-    red_image = Image.new('1', (width, height), red_fill)
-
-    epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
+log = logging.getLogger(__name__)
 
 
-def main():
-    epd = epd7in5b_V2.EPD()
-    epd.init()
+def main() -> None:
+    log.info("Screen saver starting")
+    device = get_display()
+    device.init()
 
     colors = ["black", "red", "white"]
     random.shuffle(colors)
 
     for color in colors:
-        logging.info(f"Displaying {color} screen")
+        log.info("Displaying %s screen", color)
+        width, height = 800, 480
         if color == "black":
-            display_image(epd, black_fill=0, red_fill=1)
+            black = Image.new("1", (width, height), 0)
+            red   = Image.new("1", (width, height), 1)
+            device.display(black, red)
         elif color == "red":
-            display_image(epd, black_fill=1, red_fill=0)
+            black = Image.new("1", (width, height), 1)
+            red   = Image.new("1", (width, height), 0)
+            device.display(black, red)
         else:
-            epd.Clear()
+            if hasattr(device, "clear"):
+                device.clear()
+            else:
+                white = Image.new("1", (width, height), 1)
+                device.display(white, white)
 
-    logging.info("Sleeping display")
-    epd.sleep()
+    log.info("Sleeping display")
+    device.sleep()
 
-    cache_dir = os.environ.get('CACHE_DIRECTORY', tempfile.gettempdir())
-    for filename in ["InfoWindowRed.png", "InfoWindowBlack.png"]:
-        path = os.path.join(cache_dir, filename)
-        if os.path.exists(path):
-            os.remove(path)
-            logging.info("Removed cached image: %s", path)
+    # Remove cached images so infowindow forces a full redraw next run.
+    if hasattr(device, "clear_cache"):
+        device.clear_cache()
 
-    logging.info("Screen saver finished")
+    log.info("Screen saver finished")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
