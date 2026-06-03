@@ -1,133 +1,223 @@
-![alt text](infowindow.jpg)
+![InfoWindow on a shelf](infowindow.jpg)
 
+# InfoWindow
 
-# Infowindow
-Rapsberry pi powered e-ink display for displaying information in an always on state. There are several other iterations
-of this project online, but they didnt do quite what I wanted them to. This is my version. Also keeping up my python
-skills as they dont get used as much as they used to!
-*Please be aware that this version is built for the v2 version of the e-ink screen!*
+Raspberry Pi powered e-ink display showing calendar, todo items and weather in an always-on state.
+Built for the **Waveshare 7.5" V2 three-colour (black/red/white)** e-ink display.
 
-The functionality is not meant to be an "end all solution for calendaring and Todo lists" The intent is to provide an
-*always  on* display to show me what is coming up next. I can then check in browser, phone, etc for details and updates
-to the data. In your face reminder.
+The goal is not a full-featured PIM — it is an *in your face* reminder of what is coming up next.
+Details stay in your calendar app, phone, or browser.
+
 <div align="center">
   <a href="#features">Features</a> |
-  <a href="#installation">Installation</a> | 
-  <a href="#configuration">Configuration</a> | 
-  <a href="#running">Running</a>
+  <a href="#hardware-setup">Hardware</a> |
+  <a href="#installation">Installation</a> |
+  <a href="#configuration">Configuration</a> |
+  <a href="#running">Running</a> |
+  <a href="#local-development">Local development</a>
 </div>
 
+---
+
 ## Features
-* **Calendar**
-  * Google Calendar
-  * CalDAV Calendar (added for Nextcloud support)
-* **Todo List**
-  * Todoist
-  * Teamwork.com
-  * CalDAV Todos (added for Nextcloud support)
-* **Weather**
-  * Open Weather Map current data only. Future plan for forecast data.
 
-## Installation
-### Raspberry Pi setup
-Activate SPI on your Raspberry Pi by using the `raspi-config` tool under Interface Options and reboot.
+| Area | Backends |
+|---|---|
+| **Calendar** | Google Calendar, CalDAV (Nextcloud etc.) |
+| **Todo** | Google Tasks, CalDAV (Nextcloud etc.), Teamwork |
+| **Weather** | OpenWeatherMap (current conditions) |
 
-Also for some RaspiOS versions, you have to install the `libopenjp2-7` package: 
+Multiple backends can be enabled simultaneously — results are merged and sorted.
+
+---
+
+## Hardware setup
+
+### Enable SPI
 ```bash
-sudo apt-get install libopenjp2-7 libxslt1
+sudo raspi-config   # Interface Options → SPI → Enable
+sudo reboot
 ```
 
-### Get software
-Clone this repo onto your raspberry pi. Does not really matter where it is, but good option is in the `pi` users home
-directory: `/home/pi/InfoWindow`
+### System packages
+```bash
+sudo apt install python3-dev libopenjp2-7 libxslt1.1
+```
 
-### Clone the e-Paper driver from waveshare
-Waveshare sometimes changes things in their driver. So this part might need some changes, be aware!
+### Clone this repo
+```bash
+git clone https://github.com/oxivanisher/InfoWindow.git /home/pi/InfoWindow
+```
+
+### Clone the Waveshare e-Paper driver
+The driver is not bundled — clone it separately and symlink it into the project.
+Waveshare occasionally restructures their repo, so the path may need adjusting.
 ```bash
 git clone https://github.com/waveshareteam/e-Paper.git /home/pi/e-Paper
-ln -s /home/pi/e-Paper/RaspberryPi_JetsonNano/python/lib/waveshare_epd/ /home/pi/InfoWindow/driver
+ln -s /home/pi/e-Paper/RaspberryPi_JetsonNano/python/lib/waveshare_epd/ \
+      /home/pi/InfoWindow/driver
 ```
 
-### Setup python modules
-Run the following commands to install the requirements. I stuck to basic standard modules for
-ease of installation.
+---
+
+## Installation
+
 ```bash
 cd /home/pi/InfoWindow
-export CFLAGS=-fcommon
-sudo apt install python3-dev
 python3 -m venv venv
-. venv/bin/activate
-pip install -r requirements.txt
+source venv/bin/activate
+pip install -e ".[rpi,google,caldav]"
 ```
 
+Install only the extras you need:
+
+| Extra | Installs |
+|---|---|
+| `rpi` | Raspberry Pi GPIO libraries (required on Pi) |
+| `google` | Google Calendar / Tasks API client |
+| `caldav` | CalDAV client (Nextcloud, etc.) |
+| `todoist` | Todoist stub *(v8 API discontinued — not functional)* |
+
+---
+
 ## Configuration
-You will need to configure a few things such as API Keys and location. Copy config.json-sample to config.json. Edit
-config.json to add your api keys and other information.
 
-## Optional: Increase lifetime of your SD-Card
-If you want to increase the lifetime of the SD-Card, add the following line to `/etc/fstab` and reboot: 
-
-`tmpfs    /tmp    tmpfs    defaults,noatime,nosuid,size=100m    0 0`
-
-With this line, the `/tmp` folder will be held in RAM and will not be written to the SD-Card.
-
-## Optional: Screen saver 
-Always displaying the same colors at the same spots might have some negative effect on your E-Ink screen. To remedy
-this, there is a simple additional script, which displays all three colors on the whole screen: I recommend to let
-this run once every night, i.e. at 1 minute past 5 with:
-* Run `crontab -e`
-* insert `1   5 * * * /home/pi/InfoWindow/venv/bin/python3 /home/pi/InfoWindow/screensaver.py > /dev/null 2>&1`
+Copy the sample and fill in your details:
+```bash
+cp config.json-sample config.json
+```
 
 ### General
-* rotation: 0 - This is the rotation of the display in degrees. Leave at zero if you use it as a desktop display. Change
-to 180 if you have it mounted and hanging from a shelf.
-* timeformat: 12h / 24h
+| Key | Values | Description |
+|---|---|---|
+| `rotation` | `0` / `180` | `0` for desktop use, `180` if mounted hanging from a shelf |
+| `timeformat` | `12h` / `24h` | Clock format used throughout |
+| `sunday_first_dow` | `true` / `false` | Week start day for calendar grouping |
+| `cell_spacing` | integer | Pixel padding inside cells |
+| `timezone` | e.g. `Europe/Zurich` | Local timezone |
 
-### Todo (Module)
-Todoist is the current active module in this code. It only requires `api_key`. Teamwork also requires a 'site' key. If
-using google tasks, leave this as null `todo: null`
-* api_key: Enter your todoist API key.
+### Weather — OpenWeatherMap
+```json
+"weather": {
+    "api_key": "your-owm-key",
+    "city": "Zurich,CH",
+    "units": "metric"
+}
+```
+`units` accepts `metric`, `imperial`, or `standard` (Kelvin).
 
-There is a bug in the Google API which will prevent to show repeated Tasks once one is marked as completed. See (and
-upvote): 
-* https://support.google.com/calendar/thread/3706294
-* https://support.google.com/calendar/thread/4113489
-* https://support.google.com/calendar/thread/111623199
-* https://support.google.com/calendar/thread/113398139
+### Google Calendar and Tasks
 
-### Weather (Module)
-Open Weather Map is where the data is coming from in the default module. This requires a few keys.
-* api_key: Get your api key from OWM website.
-* city: Look at OWM docs to figure what your city name is. Mine is "Sacramento,US"
-* units: This can either be `imperial` or `metric`
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/apis/).
+2. Create a project (e.g. `infowindow`).
+3. Create an [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent).
+4. Create an [OAuth 2.0 client ID](https://console.cloud.google.com/apis/credentials) (type: *Desktop app*).
+5. Download the JSON file and save it as `google_secret.json` in the project directory.
 
-### Google calendar and ToDo list (Modules)
-To use the google APIs, you first have to login to the [google cloud console](https://console.cloud.google.com/apis/).
-In the google cloud console, do the following things:
-1) Create a project and give it a name, i.e. `infowindow` and switch to the context of this project if not already
-   active.
-2) Create a [new oauth consent screen](https://console.cloud.google.com/apis/credentials/consent) (just enter a name
-   should be enough).
-3) Create a [new oauth 2.0 client id](https://console.cloud.google.com/apis/credentials). Choosing type `other` should
-   work just fine. Finally, download the json file provided by the google cloud console and store it in the repo
-   directory (i.e. `/home/pi/InfoWindow/google_secret.json`) on the Raspberry Pi.  
+Enable the backends in `config.json`:
+```json
+"calendar_google": { "enabled": true, "additional": ["Contacts", "Birthdays"] },
+"todo_google":     { "enabled": true }
+```
 
-### CalDAV calendar and ToDo list (Modules)
-To use CalDAV, configure the corresponding modules in the `config.json`. If you use a Nextcloud server, you can
-find the CalDAV URL in the settings of your calendar. As a example (where `USERNAME` is you username):
-`https://cloud.domain.tld/remote.php/dav/calendars/USERNAME`
+> **Note:** There is a known Google API bug where repeated tasks stop appearing once one
+> instance is marked complete. See the [Google support thread](https://support.google.com/calendar/thread/3706294).
 
-#### Calendar
-There are are additional sections in the config for this module:
-* additional: A list of additional calendar names (summary) to fetch. To use i.e. birthdays, add "Contacts" (also if
-              you use google in german.
-* ignored: A list of events to be removed from the calendar display.
-        
+### CalDAV (Nextcloud etc.)
+
+For Nextcloud the CalDAV URL is usually:
+`https://cloud.example.com/remote.php/dav/calendars/USERNAME`
+
+```json
+"calendar_caldav": {
+    "enabled": true,
+    "caldav_url": "https://cloud.example.com/remote.php/dav/calendars/USERNAME",
+    "username": "john",
+    "password": "secret",
+    "additional": ["Personal", "Birthdays"]
+},
+"todo_caldav": {
+    "enabled": true,
+    "caldav_url": "https://cloud.example.com/remote.php/dav/calendars/USERNAME",
+    "username": "john",
+    "password": "secret",
+    "additional": ["Tasks"]
+}
+```
+
+`additional` is a list of calendar names to include. Leave it empty (`[]`) to include all.
+
+`ignored` (under `calendar`) is a list of event titles to suppress from the display.
+
+---
+
 ## Running
-### First Run
-You should run the script manually the first time so that Googles auth modules can run interactivly. Once that has
-completed you will want to add this to CRON so it runs every few minutes automatically.
 
-### Cron Run (Normal use)
-* Run `crontab -e`
-* insert `*/6 * * * * /home/pi/InfoWindow/venv/bin/python3 /home/pi/InfoWindow/infowindow.py --cron > /dev/null 2>&1` 
+### First run — Google authentication
+If you use Google backends, run the script **manually once** so the OAuth flow can open
+interactively and save a token:
+```bash
+source venv/bin/activate
+python infowindow.py
+```
+
+Subsequent runs use the saved `token.pickle` and refresh it automatically.
+
+### systemd (recommended)
+
+The `dist/` directory contains ready-to-use systemd units.
+Link them into place — no need to copy, so pulling updates keeps them current:
+
+```bash
+sudo ln -s /home/pi/InfoWindow/dist/infowindow.service          /etc/systemd/system/
+sudo ln -s /home/pi/InfoWindow/dist/infowindow.timer            /etc/systemd/system/
+sudo ln -s /home/pi/InfoWindow/dist/infowindow-screensaver.service /etc/systemd/system/
+sudo ln -s /home/pi/InfoWindow/dist/infowindow-screensaver.timer   /etc/systemd/system/
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now infowindow.timer
+sudo systemctl enable --now infowindow-screensaver.timer
+```
+
+> **Note:** The service files currently hardcode `User=pi`. Adjust if your username differs.
+
+The **updater** runs every 6 minutes. The **screensaver** runs once daily at 05:01 to cycle
+the display through black, red, and white — preventing image retention.
+
+#### Useful commands
+```bash
+journalctl -u infowindow -f          # live logs from the updater
+journalctl -u infowindow-screensaver # screensaver logs
+systemctl status infowindow.timer    # next scheduled run
+```
+
+---
+
+## Optional: extend SD-card lifetime
+
+Add this line to `/etc/fstab` and reboot to keep `/tmp` in RAM:
+```
+tmpfs    /tmp    tmpfs    defaults,noatime,nosuid,size=100m    0 0
+```
+
+---
+
+## Local development
+
+The display driver is not available outside a Raspberry Pi, but a **mock display**
+activates automatically on any other machine. It composites the black and red layers
+into a colour preview PNG and opens it with your default image viewer.
+
+```bash
+# One-time setup (no rpi extra needed)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[google,caldav]"
+
+# Run
+python infowindow.py
+# → preview saved to /tmp/InfoWindowPreview.png
+```
+
+The mock faithfully reproduces the Waveshare rendering rules: red wins over black when
+both layers have ink at the same pixel.
