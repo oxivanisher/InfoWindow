@@ -14,7 +14,7 @@ from infowindow.layout import (
     render_calendar_column,
     render_todos,
     render_weather,
-    _centered_text,
+    centered_text,
 )
 from infowindow.sources.loader import (
     load_calendar_sources,
@@ -61,8 +61,8 @@ def main() -> None:
     else:
         left_title, right_title = "CALENDAR", "TODO"
 
-    _centered_text(canvas, left_title,  "robotoBlack24", "white", 200, 64)
-    _centered_text(canvas, right_title, "robotoBlack24", "white", 600, 64)
+    centered_text(canvas, left_title,  "robotoBlack24", "white", 200, 64)
+    centered_text(canvas, right_title, "robotoBlack24", "white", 600, 64)
 
     if weather_data is not None:
         render_weather(canvas, weather_data, config)

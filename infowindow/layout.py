@@ -32,7 +32,7 @@ def _max_char_size(canvas: Canvas, chars: str, font: str) -> tuple[int, int]:
     return max_w, max_h
 
 
-def _centered_text(
+def centered_text(
     canvas: Canvas,
     text: str,
     font: str,
