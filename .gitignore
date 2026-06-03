@@ -2,10 +2,15 @@ google_secret.json
 *.pickle
 *.code-workspace
 *.pyc
+__pycache__/
+*.egg-info/
+dist/build/
+.mypy_cache/
 icons/*.png
 test.py
 config.json
 infowindow.jpg
 venv/
+.venv/
 .idea/
 driver

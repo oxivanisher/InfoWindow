@@ -23,19 +23,20 @@ class MockEPD:
         log.info("MockEPD: init (no-op)")
 
     def display(self, black_image: Image.Image, red_image: Image.Image) -> None:
-        width, height = Canvas.WIDTH, Canvas.HEIGHT
+        width, height = black_image.size
 
         preview = Image.new("RGB", (width, height), "white")
 
-        # Red layer: where red_image pixel = 0 (has ink), paint red
-        red_layer = Image.new("RGB", (width, height), "red")
-        red_mask  = ImageOps.invert(red_image.convert("L"))
-        preview.paste(red_layer, mask=red_mask)
-
-        # Black layer: where black_image pixel = 0, paint black (on top of red)
+        # Black layer first: where black_image pixel = 0 (has ink), paint black
         black_layer = Image.new("RGB", (width, height), "black")
         black_mask  = ImageOps.invert(black_image.convert("L"))
         preview.paste(black_layer, mask=black_mask)
+
+        # Red layer on top: where red_image pixel = 0 (has ink), paint red.
+        # Red wins over black — matches Waveshare 7.5" B V2 hardware behaviour.
+        red_layer = Image.new("RGB", (width, height), "red")
+        red_mask  = ImageOps.invert(red_image.convert("L"))
+        preview.paste(red_layer, mask=red_mask)
 
         preview.save(_PREVIEW_PATH)
         log.info("MockEPD: preview saved to %s", _PREVIEW_PATH)
@@ -51,10 +52,3 @@ class MockEPD:
 
     def clear_cache(self) -> None:
         """No cache to clear on the mock."""
-
-
-# Forward reference so mock.py can reference Canvas.WIDTH/HEIGHT without
-# importing canvas (which would create a circular dependency).
-class Canvas:  # type: ignore[no-redef]
-    WIDTH = 800
-    HEIGHT = 480
