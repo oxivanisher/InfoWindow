@@ -82,6 +82,14 @@ def render_centered_text(iw, text, font, color, center_position, y_position):
 
 
 # Main Program ################################################################
+def safe_fetch(func, name):
+    try:
+        return func()
+    except Exception as e:
+        logging.error("Failed to fetch %s, skipping: %s", name, e, exc_info=True)
+        return None
+
+
 def main():
     # Instantiate API modules
     todoGoogle = modTodoGoogle.ToDo(todo_opts)
@@ -124,7 +132,7 @@ def main():
     # DISPLAY TO DO INFO
     # =========================================================================
     todo_items = sorted(
-        todoGoogle.list() + todoCaldav.list(),
+        (safe_fetch(todoGoogle.list, "Google Todo") or []) + (safe_fetch(todoCaldav.list, "CalDAV Todo") or []),
         key=lambda x: (x["priority"] == 0, x["priority"])
     )
     logging.debug("Todo Items")
@@ -152,7 +160,10 @@ def main():
 
     # DISPLAY CALENDAR INFO
     # =========================================================================
-    cal_items = sorted(calGoogle.list() + calCaldav.list(), key=lambda x: x["start_ts"], reverse=False)
+    cal_items = sorted(
+        (safe_fetch(calGoogle.list, "Google Calendar") or []) + (safe_fetch(calCaldav.list, "CalDAV Calendar") or []),
+        key=lambda x: x["start_ts"], reverse=False
+    )
     logging.debug("Calendar Items")
     logging.debug("-----------------------------------------------------------------------")
 
@@ -290,52 +301,53 @@ def main():
 
     # DISPLAY WEATHER INFO
     # =========================================================================
-    weather = weather.list()
+    weather = safe_fetch(weather.list, "weather")
     logging.debug("Weather Info")
     logging.debug("-----------------------------------------------------------------------")
-    # Set unit descriptors
-    if weather_opts['units'] == 'imperial':
-        u_speed = "mph"
-        u_temp = "F"
-    elif weather_opts['units'] == 'metric':
-        u_speed = "m/sec"
-        u_temp = "C"
-    else:
-        u_speed = "m/sec"
-        u_temp = "K"
+    if weather is not None:
+        # Set unit descriptors
+        if weather_opts['units'] == 'imperial':
+            u_speed = "mph"
+            u_temp = "F"
+        elif weather_opts['units'] == 'metric':
+            u_speed = "m/sec"
+            u_temp = "C"
+        else:
+            u_speed = "m/sec"
+            u_temp = "K"
 
-    # Weather left box
-    deg_symbol = "°"
-    iw.bitmap(2, 2, weather['icon'])
-    iw.text(90, 2, weather['description'].title().strip(), 'robotoBlack24', 'black')
-    iw.text(90, 35, weather['sunrise'], weather_font, 'black')
-    iw.text(192, 35, weather['sunset'], weather_font, 'black')
+        # Weather left box
+        deg_symbol = "°"
+        iw.bitmap(2, 2, weather['icon'])
+        iw.text(90, 2, weather['description'].title().strip(), 'robotoBlack24', 'black')
+        iw.text(90, 35, weather['sunrise'], weather_font, 'black')
+        iw.text(192, 35, weather['sunset'], weather_font, 'black')
 
-    # Temp ( adjust for str length )
-    temp_string = str(weather['temp_cur']) + deg_symbol
-    left, top, right, bottom = iw.getFont(temperature_font).getbbox(temp_string)
-    text_width, text_height = right - left, bottom - top
-    temp_left = (iw.width / 2) - (text_width / 2)
-    iw.text(temp_left, 2, temp_string, temperature_font, 'white')
-    t_desc_posx = (temp_left + text_width) - 18
-    iw.text(t_desc_posx, 28, u_temp, 'robotoBlack24', 'white')
+        # Temp ( adjust for str length )
+        temp_string = str(weather['temp_cur']) + deg_symbol
+        left, top, right, bottom = iw.getFont(temperature_font).getbbox(temp_string)
+        text_width, text_height = right - left, bottom - top
+        temp_left = (iw.width / 2) - (text_width / 2)
+        iw.text(temp_left, 2, temp_string, temperature_font, 'white')
+        t_desc_posx = (temp_left + text_width) - 18
+        iw.text(t_desc_posx, 28, u_temp, 'robotoBlack24', 'white')
 
-    # Wind
-    iw.bitmap(480, 0, "windSmall.bmp")  # Wind Icon
-    iw.text(520, 5, weather['wind']['dir'], weather_font, 'black')
-    iw.text(480, 35, str(weather['wind']['speed']) + u_speed, weather_font, 'black')
-    iw.line(576, 0, 576, 64, 'black')  # Third Vertical Line
+        # Wind
+        iw.bitmap(480, 0, "windSmall.bmp")  # Wind Icon
+        iw.text(520, 5, weather['wind']['dir'], weather_font, 'black')
+        iw.text(480, 35, str(weather['wind']['speed']) + u_speed, weather_font, 'black')
+        iw.line(576, 0, 576, 64, 'black')  # Third Vertical Line
 
-    # Rain
-    iw.bitmap(616, 0, "rainSmall.bmp")  # Rain Icon
-    iw.text(601, 29, "1hr: " + str(weather['rain']['1h']), weather_font, 'black')
-    iw.text(601, 44, "3hr: " + str(weather['rain']['3h']), weather_font, 'black')
-    iw.line(687, 0, 687, 64, 'black')  # Fourth Vertical Line
+        # Rain
+        iw.bitmap(616, 0, "rainSmall.bmp")  # Rain Icon
+        iw.text(601, 29, "1hr: " + str(weather['rain']['1h']), weather_font, 'black')
+        iw.text(601, 44, "3hr: " + str(weather['rain']['3h']), weather_font, 'black')
+        iw.line(687, 0, 687, 64, 'black')  # Fourth Vertical Line
 
-    # Snow
-    iw.bitmap(728, 0, "snowSmall.bmp")  # Snow Icon
-    iw.text(716, 29, "1hr: " + str(weather['snow']['1h']), weather_font, 'black')
-    iw.text(716, 44, "3hr: " + str(weather['snow']['3h']), weather_font, 'black')
+        # Snow
+        iw.bitmap(728, 0, "snowSmall.bmp")  # Snow Icon
+        iw.text(716, 29, "1hr: " + str(weather['snow']['1h']), weather_font, 'black')
+        iw.text(716, 44, "3hr: " + str(weather['snow']['3h']), weather_font, 'black')
 
     # Write to screen
     # =========================================================================
