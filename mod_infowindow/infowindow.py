@@ -20,8 +20,10 @@ class InfoWindow:
         self.black_draw = ImageDraw.Draw(self.black_image)
         self.fonts = {}
         self.initFonts()
-        self.tmpImagePathRed = os.path.join(tempfile.gettempdir(), "InfoWindowRed.png")
-        self.tmpImagePathBlack = os.path.join(tempfile.gettempdir(), "InfoWindowBlack.png")
+        cache_dir = os.environ.get('CACHE_DIRECTORY', tempfile.gettempdir())
+        self.tmpImagePathRed = os.path.join(cache_dir, "InfoWindowRed.png")
+        self.tmpImagePathBlack = os.path.join(cache_dir, "InfoWindowBlack.png")
+        logging.info("Image cache: %s, %s", self.tmpImagePathRed, self.tmpImagePathBlack)
         self.timeformat = options['timeformat']
 
     def getCWD(self):
@@ -100,17 +102,23 @@ class InfoWindow:
 
         new_image_found = False
         if os.path.exists(self.tmpImagePathRed):
-            diff = ImageChops.difference(self.red_image, Image.open(self.tmpImagePathRed))
-            if diff.getbbox():
+            diff = ImageChops.difference(self.red_image.convert("L"), Image.open(self.tmpImagePathRed).convert("L"))
+            bbox = diff.getbbox()
+            if bbox:
+                logging.info("Red layer changed at %s", bbox)
                 new_image_found = True
         else:
+            logging.info("No previous red image found, treating as new.")
             new_image_found = True
 
         if os.path.exists(self.tmpImagePathBlack):
-            diff = ImageChops.difference(self.black_image, Image.open(self.tmpImagePathBlack))
-            if diff.getbbox():
+            diff = ImageChops.difference(self.black_image.convert("L"), Image.open(self.tmpImagePathBlack).convert("L"))
+            bbox = diff.getbbox()
+            if bbox:
+                logging.info("Black layer changed at %s", bbox)
                 new_image_found = True
         else:
+            logging.info("No previous black image found, treating as new.")
             new_image_found = True
 
         if new_image_found:

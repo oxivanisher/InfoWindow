@@ -1,0 +1,20 @@
+[Unit]
+Description=InfoWindow screensaver
+After=network.target
+
+[Service]
+ExecStart=/home/pi/InfoWindow/venv/bin/python3 /home/pi/InfoWindow/screensaver.py
+WorkingDirectory=/home/pi/InfoWindow/
+CacheDirectory=InfoWindow
+TimeoutStartSec=3m
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=infowindow-screensaver
+NotifyAccess=all
+User=pi
+Group=pi
+Nice=1
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

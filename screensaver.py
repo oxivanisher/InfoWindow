@@ -3,6 +3,7 @@
 import logging
 import os
 import random
+import tempfile
 from PIL import Image
 
 from driver import epd7in5b_V2
@@ -40,6 +41,14 @@ def main():
 
     logging.info("Sleeping display")
     epd.sleep()
+
+    cache_dir = os.environ.get('CACHE_DIRECTORY', tempfile.gettempdir())
+    for filename in ["InfoWindowRed.png", "InfoWindowBlack.png"]:
+        path = os.path.join(cache_dir, filename)
+        if os.path.exists(path):
+            os.remove(path)
+            logging.info("Removed cached image: %s", path)
+
     logging.info("Screen saver finished")
 
 

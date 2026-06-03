@@ -1,0 +1,20 @@
+[Unit]
+Description=InfoWindow updater
+After=network.target
+
+[Service]
+ExecStart=/home/pi/InfoWindow/venv/bin/python3 /home/pi/InfoWindow/infowindow.py --cron
+WorkingDirectory=/home/pi/InfoWindow/
+CacheDirectory=InfoWindow
+TimeoutStartSec=3m
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=infowindow
+NotifyAccess=all
+User=pi
+Group=pi
+Nice=1
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

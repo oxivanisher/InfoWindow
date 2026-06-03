@@ -1,0 +1,10 @@
+[Unit]
+Description=InfoWindow screensaver
+
+[Timer]
+Unit=infowindow-screensaver.service
+#OnCalendar=5:1
+OnCalendar=5:1
+
+[Install]
+WantedBy=timers.target

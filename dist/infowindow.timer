@@ -1,0 +1,9 @@
+[Unit]
+Description=InfoWindow updater
+
+[Timer]
+Unit=infowindow.service
+OnCalendar=*:0/6
+
+[Install]
+WantedBy=timers.target
