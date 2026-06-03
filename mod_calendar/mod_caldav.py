@@ -28,6 +28,7 @@ class Cal:
                 url=options["calendar_caldav"]["caldav_url"],
                 username=options["calendar_caldav"]["username"],
                 password=options["calendar_caldav"]["password"],
+                timeout=30,
             )
             self.timeformat = options["timeformat"]
             self.additional = options["calendar_caldav"]["additional"]

@@ -14,6 +14,7 @@ class ToDo:
                 url=options["todo_caldav"]["caldav_url"],
                 username=options["todo_caldav"]["username"],
                 password=options["todo_caldav"]["password"],
+                timeout=30,
             )
             self.timeformat = options["timeformat"]
             self.additional = options["todo_caldav"]["additional"]

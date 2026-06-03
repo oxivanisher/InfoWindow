@@ -49,7 +49,7 @@ class Weather:
 
     def list(self):
         url = 'http://api.openweathermap.org/data/2.5/weather'
-        r = requests.get('{}?q={}&units={}&appid={}'.format(url, self.city, self.units, self.api_key))
+        r = requests.get('{}?q={}&units={}&appid={}'.format(url, self.city, self.units, self.api_key), timeout=30)
 
         data = r.json()
 
