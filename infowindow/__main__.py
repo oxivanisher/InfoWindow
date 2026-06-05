@@ -47,10 +47,11 @@ def main() -> None:
 
     draw_layout(canvas)
 
-    cal_opts = {
+    cal_opts  = {
         **config.get("calendar", {}),
         "timeformat": general["timeformat"],
     }
+    todo_opts = config.get("todo", {})
 
     last_item, _ = render_calendar_column(canvas, cal_items, 0, 391, cal_opts, cell_spacing)
 
@@ -64,7 +65,8 @@ def main() -> None:
             canvas, cal_items, 408, 800, cal_opts, cell_spacing,
             last_item + 1, max_y=480 - todo_height,
         )
-        render_todos(canvas, todo_items, cell_spacing, start_y=right_col_y)
+        render_todos(canvas, todo_items, cell_spacing, start_y=right_col_y,
+                     font_size=todo_opts.get("font_size", 22))
         left_title, right_title = "CALENDAR", "CALENDAR"
 
     centered_text(canvas, left_title,  "robotoBlack24", "white", 200, 64)

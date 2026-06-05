@@ -10,6 +10,8 @@ from infowindow.sources.types import CalendarItem, TodoItem, WeatherData
 
 log = logging.getLogger(__name__)
 
+_ENTRY_FONT: dict[int, str] = {14: "robotoBlack14", 18: "robotoBlack18", 22: "robotoBlack22"}
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -119,12 +121,13 @@ def render_todos(
     items: list[TodoItem],
     cell_spacing: int,
     start_y: int = 92,
+    font_size: int = 22,
 ) -> int:
     """Draw todo header row + items; return y after the last rendered item."""
     if not items:
         return start_y
 
-    font = "robotoBlack22"
+    font = _ENTRY_FONT.get(font_size, "robotoBlack22")
     _, date_h   = _max_char_size(canvas, string.digits, "robotoBlack14")
     line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
 
@@ -133,11 +136,14 @@ def render_todos(
     canvas.text(int((408 + 800) / 2 - todo_w / 2), start_y + line_height // 2, "TODO", font, "white", anchor="lm")
     canvas.line(408, start_y + line_height + 2, 800, start_y + line_height + 2, "black")
 
-    y = start_y + line_height + 2
+    y      = start_y + line_height + 2
+    text_x = 408 + cell_spacing
+    max_w  = 800 - text_x - cell_spacing
 
     for item in items:
-        color = "red" if item.get("today") else "black"
-        canvas.text(416, y + line_height // 2, item["content"].strip(), font, color, anchor="lm")
+        color   = "red" if item.get("today") else "black"
+        content = canvas.truncate(item["content"].strip(), font, max_w)
+        canvas.text(text_x, y + line_height // 2, content, font, color, anchor="lm")
         canvas.line(408, y + line_height + 2, 800, y + line_height + 2, "black")
         y += line_height + 2
         if y > 480:
@@ -162,7 +168,7 @@ def render_calendar_column(
 ) -> tuple[int, int]:
     """Render calendar items into one column; return (last_index, next_y)."""
     date_font  = "robotoBlack14"
-    entry_font = "robotoBlack22"
+    entry_font = _ENTRY_FONT.get(opts.get("font_size", 22), "robotoBlack22")
 
     _, digit_h        = _max_char_size(canvas, string.digits, date_font)
     sep_str           = ": pm" if opts.get("timeformat") == "12h" else "."
