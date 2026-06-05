@@ -52,7 +52,7 @@ def main() -> None:
         "timeformat": general["timeformat"],
     }
 
-    last_item = render_calendar_column(canvas, cal_items, 0, 391, cal_opts, cell_spacing)
+    last_item, _ = render_calendar_column(canvas, cal_items, 0, 391, cal_opts, cell_spacing)
 
     todo_height = measure_todos(canvas, todo_items, cell_spacing)
 
@@ -60,9 +60,11 @@ def main() -> None:
         render_calendar_column(canvas, cal_items, 408, 800, cal_opts, cell_spacing, last_item + 1)
         left_title, right_title = "CALENDAR 1/2", "CALENDAR 2/2"
     else:
-        todo_start_y = max(92, 480 - todo_height)
-        render_calendar_column(canvas, cal_items, 408, 800, cal_opts, cell_spacing, last_item + 1, max_y=todo_start_y)
-        render_todos(canvas, todo_items, cell_spacing, start_y=todo_start_y)
+        _, right_col_y = render_calendar_column(
+            canvas, cal_items, 408, 800, cal_opts, cell_spacing,
+            last_item + 1, max_y=480 - todo_height,
+        )
+        render_todos(canvas, todo_items, cell_spacing, start_y=right_col_y)
         left_title, right_title = "CALENDAR", "CALENDAR"
 
     centered_text(canvas, left_title,  "robotoBlack24", "white", 200, 64)

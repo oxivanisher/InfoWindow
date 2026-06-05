@@ -158,9 +158,9 @@ def render_calendar_column(
     opts: dict,
     cell_spacing: int,
     start_index: int = 0,
-    max_y: int = 480,
-) -> int:
-    """Render calendar items into one column; return the index of the last item drawn."""
+    max_y: int = 9999,
+) -> tuple[int, int]:
+    """Render calendar items into one column; return (last_index, next_y)."""
     date_font  = "robotoBlack14"
     entry_font = "robotoBlack22"
 
@@ -181,8 +181,7 @@ def render_calendar_column(
     last_index      = start_index
 
     for cal_item in items[start_index:]:
-        if y + line_height + 2 > max_y:
-            log.debug("Calendar column full, stopping.")
+        if y + line_height + 2 > max_y:  # respect hard ceiling (e.g. todo section)
             break
 
         new_week = False
@@ -242,8 +241,10 @@ def render_calendar_column(
 
         last_index = items.index(cal_item)
         y += line_height + 2
+        if y > 480:  # original overflow allowance — items may clip slightly at screen edge
+            break
 
-    return last_index
+    return last_index, y
 
 
 # ---------------------------------------------------------------------------
