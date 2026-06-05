@@ -130,7 +130,8 @@ def render_todos(
     line_height = text_h + 2 * cell_spacing
 
     canvas.rectangle(408, start_y, 800, start_y + line_height, "red")
-    centered_text(canvas, "TODO", font, "white", (408 + 800) / 2, start_y + cell_spacing)
+    todo_w = canvas.get_font(font).getlength("TODO")
+    canvas.text(int((408 + 800) / 2 - todo_w / 2), start_y + line_height // 2, "TODO", font, "white", anchor="lm")
     canvas.line(408, start_y + line_height + 1, 800, start_y + line_height + 1, "black")
 
     y = start_y + line_height + 2
@@ -139,7 +140,7 @@ def render_todos(
         if y + line_height + 2 > 480:
             break
         color = "red" if item.get("today") else "black"
-        canvas.text(416, y + cell_spacing, item["content"].strip(), font, color)
+        canvas.text(416, y + line_height // 2, item["content"].strip(), font, color, anchor="lm")
         canvas.line(408, y + line_height + 1, 800, y + line_height + 1, "black")
         y += line_height + 2
 
