@@ -109,9 +109,8 @@ def measure_todos(canvas: Canvas, items: list[TodoItem], cell_spacing: int) -> i
     """Return the pixel height needed for the todo header row + all items."""
     if not items:
         return 0
-    font = "robotoBlack22"
-    _, text_h = _max_char_size(canvas, string.printable, font)
-    line_height = text_h + 2 * cell_spacing
+    _, date_h = _max_char_size(canvas, string.digits, "robotoBlack14")
+    line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
     return (len(items) + 1) * (line_height + 2)  # +1 for header row
 
 
@@ -125,14 +124,14 @@ def render_todos(
     if not items:
         return start_y
 
-    font        = "robotoBlack22"
-    _, text_h   = _max_char_size(canvas, string.printable, font)
-    line_height = text_h + 2 * cell_spacing
+    font = "robotoBlack22"
+    _, date_h   = _max_char_size(canvas, string.digits, "robotoBlack14")
+    line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
 
     canvas.rectangle(408, start_y, 800, start_y + line_height, "red")
     todo_w = canvas.get_font(font).getlength("TODO")
     canvas.text(int((408 + 800) / 2 - todo_w / 2), start_y + line_height // 2, "TODO", font, "white", anchor="lm")
-    canvas.line(408, start_y + line_height + 1, 800, start_y + line_height + 1, "black")
+    canvas.line(408, start_y + line_height + 2, 800, start_y + line_height + 2, "black")
 
     y = start_y + line_height + 2
 
@@ -141,7 +140,7 @@ def render_todos(
             break
         color = "red" if item.get("today") else "black"
         canvas.text(416, y + line_height // 2, item["content"].strip(), font, color, anchor="lm")
-        canvas.line(408, y + line_height + 1, 800, y + line_height + 1, "black")
+        canvas.line(408, y + line_height + 2, 800, y + line_height + 2, "black")
         y += line_height + 2
 
     return y
