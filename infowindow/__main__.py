@@ -11,6 +11,7 @@ from infowindow.display.canvas import Canvas
 from infowindow.layout import (
     draw_layout,
     fetch_all,
+    measure_todos,
     render_calendar_column,
     render_todos,
     render_weather,
@@ -46,20 +47,27 @@ def main() -> None:
 
     draw_layout(canvas)
 
-    todo_y = render_todos(canvas, todo_items, cell_spacing)
-
-    cal_opts = {
+    cal_opts  = {
         **config.get("calendar", {}),
         "timeformat": general["timeformat"],
     }
+    todo_opts = config.get("todo", {})
 
-    last_item = render_calendar_column(canvas, cal_items, 0, 391, cal_opts, cell_spacing)
+    last_item, _ = render_calendar_column(canvas, cal_items, 0, 391, cal_opts, cell_spacing)
 
-    if todo_y == 92:  # no tasks rendered — use right column for overflow calendar
+    todo_height = measure_todos(canvas, todo_items, cell_spacing)
+
+    if not todo_items:
         render_calendar_column(canvas, cal_items, 408, 800, cal_opts, cell_spacing, last_item + 1)
         left_title, right_title = "CALENDAR 1/2", "CALENDAR 2/2"
     else:
-        left_title, right_title = "CALENDAR", "TODO"
+        _, right_col_y = render_calendar_column(
+            canvas, cal_items, 408, 800, cal_opts, cell_spacing,
+            last_item + 1, max_y=480 - todo_height,
+        )
+        render_todos(canvas, todo_items, cell_spacing, start_y=right_col_y,
+                     font_size=todo_opts.get("font_size", 22))
+        left_title, right_title = "CALENDAR", "CALENDAR"
 
     centered_text(canvas, left_title,  "robotoBlack24", "white", 200, 64)
     centered_text(canvas, right_title, "robotoBlack24", "white", 600, 64)

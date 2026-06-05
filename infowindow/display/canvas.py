@@ -60,17 +60,18 @@ class Canvas:
             self.black_draw.rectangle(box, fill=1)
             self.red_draw.rectangle(box, fill=1)
 
-    def text(self, x: float, y: float, content: str, font: str, fill: str) -> None:
+    def text(self, x: float, y: float, content: str, font: str, fill: str, anchor: str | None = None) -> None:
         fnt = self._fonts[font]
         pos = (x, y)
+        extra = {"anchor": anchor} if anchor else {}
         if fill == "black":
-            self.black_draw.text(pos, content, font=fnt, fill=0)
+            self.black_draw.text(pos, content, font=fnt, fill=0, **extra)
         elif fill == "red":
-            self.black_draw.text(pos, content, font=fnt, fill=0)
-            self.red_draw.text(pos, content, font=fnt, fill=0)
+            self.black_draw.text(pos, content, font=fnt, fill=0, **extra)
+            self.red_draw.text(pos, content, font=fnt, fill=0, **extra)
         elif fill == "white":
-            self.black_draw.text(pos, content, font=fnt, fill=1)
-            self.red_draw.text(pos, content, font=fnt, fill=1)
+            self.black_draw.text(pos, content, font=fnt, fill=1, **extra)
+            self.red_draw.text(pos, content, font=fnt, fill=1, **extra)
 
     def bitmap(self, x: int, y: int, image_name: str) -> None:
         bmp = Image.open(ICONS_DIR / image_name)

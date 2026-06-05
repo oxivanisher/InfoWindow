@@ -6,10 +6,14 @@
         "cell_spacing": 2,
         "timezone": "Europe/Zurich"
     },
-I    "calendar": {
+    "calendar": {
+        "font_size": 22,
         "ignored": ["Buy ticket!"],
         "today_text_color": "red",
         "today_background_color": "white"
+    },
+    "todo": {
+        "font_size": 22
     },
     "calendar_google": {
         "enabled": true,

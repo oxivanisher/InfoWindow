@@ -10,6 +10,8 @@ from infowindow.sources.types import CalendarItem, TodoItem, WeatherData
 
 log = logging.getLogger(__name__)
 
+_ENTRY_FONT: dict[int, str] = {14: "robotoBlack14", 18: "robotoBlack18", 22: "robotoBlack22"}
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -105,24 +107,47 @@ def draw_layout(canvas: Canvas) -> None:
 # Todo rendering
 # ---------------------------------------------------------------------------
 
+def measure_todos(canvas: Canvas, items: list[TodoItem], cell_spacing: int) -> int:
+    """Return the pixel height needed for the todo header row + all items."""
+    if not items:
+        return 0
+    _, date_h = _max_char_size(canvas, string.digits, "robotoBlack14")
+    line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
+    return len(items) * (line_height + 2)  # last item may overflow, like calendar
+
+
 def render_todos(
     canvas: Canvas,
     items: list[TodoItem],
     cell_spacing: int,
+    start_y: int = 92,
+    font_size: int = 22,
 ) -> int:
-    """Draw todo items; return the y position after the last rendered item."""
-    font          = "robotoBlack22"
-    font_today    = "robotoBlack22"
-    _, text_h     = _max_char_size(canvas, string.printable, font)
-    line_height   = text_h + 2 * cell_spacing
-    y             = 92
+    """Draw todo header row + items; return y after the last rendered item."""
+    if not items:
+        return start_y
+
+    font = _ENTRY_FONT.get(font_size, "robotoBlack22")
+    _, date_h   = _max_char_size(canvas, string.digits, "robotoBlack14")
+    line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
+
+    canvas.rectangle(408, start_y, 800, start_y + line_height + 2, "red")
+    todo_w = canvas.get_font(font).getlength("TODO")
+    canvas.text(int((408 + 800) / 2 - todo_w / 2), start_y + line_height // 2, "TODO", font, "white", anchor="lm")
+    canvas.line(408, start_y + line_height + 2, 800, start_y + line_height + 2, "black")
+
+    y      = start_y + line_height + 2
+    text_x = 408 + cell_spacing
+    max_w  = 800 - text_x - cell_spacing
 
     for item in items:
-        color        = "red" if item.get("today") else "black"
-        current_font = font_today if item.get("today") else font
-        canvas.text(416, y + cell_spacing, item["content"].strip(), current_font, color)
-        canvas.line(408, y + line_height + 1, 800, y + line_height + 1, "black")
+        color   = "red" if item.get("today") else "black"
+        content = canvas.truncate(item["content"].strip(), font, max_w)
+        canvas.text(text_x, y + line_height // 2, content, font, color, anchor="lm")
+        canvas.line(408, y + line_height + 2, 800, y + line_height + 2, "black")
         y += line_height + 2
+        if y > 480:
+            break
 
     return y
 
@@ -139,10 +164,11 @@ def render_calendar_column(
     opts: dict,
     cell_spacing: int,
     start_index: int = 0,
-) -> int:
-    """Render calendar items into one column; return the index of the last item drawn."""
+    max_y: int = 9999,
+) -> tuple[int, int]:
+    """Render calendar items into one column; return (last_index, next_y)."""
     date_font  = "robotoBlack14"
-    entry_font = "robotoBlack22"
+    entry_font = _ENTRY_FONT.get(opts.get("font_size", 22), "robotoBlack22")
 
     _, digit_h        = _max_char_size(canvas, string.digits, date_font)
     sep_str           = ": pm" if opts.get("timeformat") == "12h" else "."
@@ -161,6 +187,9 @@ def render_calendar_column(
     last_index      = start_index
 
     for cal_item in items[start_index:]:
+        if y + line_height + 2 > max_y:  # respect hard ceiling (e.g. todo section)
+            break
+
         new_week = False
 
         if cal_item["today"]:
@@ -218,11 +247,10 @@ def render_calendar_column(
 
         last_index = items.index(cal_item)
         y += line_height + 2
-        if y > 480:
-            log.debug("Calendar column full, stopping.")
+        if y > 480:  # original overflow allowance — items may clip slightly at screen edge
             break
 
-    return last_index
+    return last_index, y
 
 
 # ---------------------------------------------------------------------------
