@@ -111,7 +111,7 @@ def measure_todos(canvas: Canvas, items: list[TodoItem], cell_spacing: int) -> i
         return 0
     _, date_h = _max_char_size(canvas, string.digits, "robotoBlack14")
     line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
-    return (len(items) + 1) * (line_height + 2)  # +1 for header row
+    return len(items) * (line_height + 2)  # last item may overflow, like calendar
 
 
 def render_todos(
@@ -128,7 +128,7 @@ def render_todos(
     _, date_h   = _max_char_size(canvas, string.digits, "robotoBlack14")
     line_height = 2 * date_h + 2 * cell_spacing  # matches calendar row height
 
-    canvas.rectangle(408, start_y, 800, start_y + line_height, "red")
+    canvas.rectangle(408, start_y, 800, start_y + line_height + 2, "red")
     todo_w = canvas.get_font(font).getlength("TODO")
     canvas.text(int((408 + 800) / 2 - todo_w / 2), start_y + line_height // 2, "TODO", font, "white", anchor="lm")
     canvas.line(408, start_y + line_height + 2, 800, start_y + line_height + 2, "black")
@@ -136,12 +136,12 @@ def render_todos(
     y = start_y + line_height + 2
 
     for item in items:
-        if y + line_height + 2 > 480:
-            break
         color = "red" if item.get("today") else "black"
         canvas.text(416, y + line_height // 2, item["content"].strip(), font, color, anchor="lm")
         canvas.line(408, y + line_height + 2, 800, y + line_height + 2, "black")
         y += line_height + 2
+        if y > 480:
+            break
 
     return y
 
