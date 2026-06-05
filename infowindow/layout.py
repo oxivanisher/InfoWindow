@@ -105,22 +105,41 @@ def draw_layout(canvas: Canvas) -> None:
 # Todo rendering
 # ---------------------------------------------------------------------------
 
+def measure_todos(canvas: Canvas, items: list[TodoItem], cell_spacing: int) -> int:
+    """Return the pixel height needed for the todo header row + all items."""
+    if not items:
+        return 0
+    font = "robotoBlack22"
+    _, text_h = _max_char_size(canvas, string.printable, font)
+    line_height = text_h + 2 * cell_spacing
+    return (len(items) + 1) * (line_height + 2)  # +1 for header row
+
+
 def render_todos(
     canvas: Canvas,
     items: list[TodoItem],
     cell_spacing: int,
+    start_y: int = 92,
 ) -> int:
-    """Draw todo items; return the y position after the last rendered item."""
-    font          = "robotoBlack22"
-    font_today    = "robotoBlack22"
-    _, text_h     = _max_char_size(canvas, string.printable, font)
-    line_height   = text_h + 2 * cell_spacing
-    y             = 92
+    """Draw todo header row + items; return y after the last rendered item."""
+    if not items:
+        return start_y
+
+    font        = "robotoBlack22"
+    _, text_h   = _max_char_size(canvas, string.printable, font)
+    line_height = text_h + 2 * cell_spacing
+
+    canvas.rectangle(408, start_y, 800, start_y + line_height, "red")
+    centered_text(canvas, "TODO", font, "white", (408 + 800) / 2, start_y + cell_spacing)
+    canvas.line(408, start_y + line_height + 1, 800, start_y + line_height + 1, "black")
+
+    y = start_y + line_height + 2
 
     for item in items:
-        color        = "red" if item.get("today") else "black"
-        current_font = font_today if item.get("today") else font
-        canvas.text(416, y + cell_spacing, item["content"].strip(), current_font, color)
+        if y + line_height + 2 > 480:
+            break
+        color = "red" if item.get("today") else "black"
+        canvas.text(416, y + cell_spacing, item["content"].strip(), font, color)
         canvas.line(408, y + line_height + 1, 800, y + line_height + 1, "black")
         y += line_height + 2
 
@@ -139,6 +158,7 @@ def render_calendar_column(
     opts: dict,
     cell_spacing: int,
     start_index: int = 0,
+    max_y: int = 480,
 ) -> int:
     """Render calendar items into one column; return the index of the last item drawn."""
     date_font  = "robotoBlack14"
@@ -161,6 +181,10 @@ def render_calendar_column(
     last_index      = start_index
 
     for cal_item in items[start_index:]:
+        if y + line_height + 2 > max_y:
+            log.debug("Calendar column full, stopping.")
+            break
+
         new_week = False
 
         if cal_item["today"]:
@@ -218,9 +242,6 @@ def render_calendar_column(
 
         last_index = items.index(cal_item)
         y += line_height + 2
-        if y > 480:
-            log.debug("Calendar column full, stopping.")
-            break
 
     return last_index
 
